@@ -9,12 +9,34 @@
 /* Begin PBXBuildFile section */
 		393B9A18FD536BF5765E9C96 /* Pods_Rx_MVVM_ToDoList.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3A22B1D5BAB4C63BC4CF96A /* Pods_Rx_MVVM_ToDoList.framework */; };
 		EC42E6E022C255BF00EA086B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6DF22C255BF00EA086B /* AppDelegate.swift */; };
-		EC42E6E222C255BF00EA086B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6E122C255BF00EA086B /* ViewController.swift */; };
-		EC42E6E522C255BF00EA086B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC42E6E322C255BF00EA086B /* Main.storyboard */; };
 		EC42E6E722C255C000EA086B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC42E6E622C255C000EA086B /* Assets.xcassets */; };
 		EC42E6EA22C255C000EA086B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC42E6E822C255C000EA086B /* LaunchScreen.storyboard */; };
 		EC42E6F522C255C000EA086B /* Rx_MVVM_ToDoListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6F422C255C000EA086B /* Rx_MVVM_ToDoListTests.swift */; };
 		EC42E70022C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6FF22C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift */; };
+		EC42E70E22C25F0800EA086B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EC42E70D22C25F0800EA086B /* GoogleService-Info.plist */; };
+		EC42E71F22C2604A00EA086B /* userIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71B22C2604900EA086B /* userIDs.swift */; };
+		EC42E72022C2604A00EA086B /* TaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71C22C2604900EA086B /* TaskModel.swift */; };
+		EC42E72122C2604A00EA086B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71D22C2604900EA086B /* User.swift */; };
+		EC42E72222C2604A00EA086B /* userIDType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71E22C2604A00EA086B /* userIDType.swift */; };
+		EC42E72422C2605B00EA086B /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72322C2605A00EA086B /* Services.swift */; };
+		EC42E72722C2606400EA086B /* TDLUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72522C2606400EA086B /* TDLUserService.swift */; };
+		EC42E72822C2606400EA086B /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72622C2606400EA086B /* UserService.swift */; };
+		EC42E72C22C2606C00EA086B /* SceneType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72922C2606B00EA086B /* SceneType.swift */; };
+		EC42E72D22C2606C00EA086B /* SceneCoordinatorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72A22C2606C00EA086B /* SceneCoordinatorType.swift */; };
+		EC42E72E22C2606C00EA086B /* SceneTransitionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72B22C2606C00EA086B /* SceneTransitionType.swift */; };
+		EC42E73122C2607400EA086B /* SceneCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72F22C2607300EA086B /* SceneCoordinator.swift */; };
+		EC42E73222C2607400EA086B /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73022C2607300EA086B /* Scene.swift */; };
+		EC42E73522C2607D00EA086B /* GoogleAutheficationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73322C2607C00EA086B /* GoogleAutheficationServiceError.swift */; };
+		EC42E73622C2607D00EA086B /* GoogleAutheficationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73422C2607C00EA086B /* GoogleAutheficationService.swift */; };
+		EC42E73822C2608400EA086B /* FacebookAutheficationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73722C2608400EA086B /* FacebookAutheficationService.swift */; };
+		EC42E73B22C2609000EA086B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73922C2609000EA086B /* LoginViewController.swift */; };
+		EC42E73C22C2609000EA086B /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73A22C2609000EA086B /* LoginViewModel.swift */; };
+		EC42E73F22C2609600EA086B /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73D22C2609600EA086B /* NavigationController.swift */; };
+		EC42E74022C2609600EA086B /* NavigationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E73E22C2609600EA086B /* NavigationViewModel.swift */; };
+		EC42E74322C2609C00EA086B /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E74122C2609C00EA086B /* SplashViewModel.swift */; };
+		EC42E74422C2609C00EA086B /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E74222C2609C00EA086B /* SplashViewController.swift */; };
+		EC42E74722C260A300EA086B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E74522C260A300EA086B /* ViewController.swift */; };
+		EC42E74822C260A300EA086B /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E74622C260A300EA086B /* ViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,8 +62,6 @@
 		DC12E94D8F297631A3A7B428 /* Pods-Rx_MVVM_ToDoList.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rx_MVVM_ToDoList.release.xcconfig"; path = "Target Support Files/Pods-Rx_MVVM_ToDoList/Pods-Rx_MVVM_ToDoList.release.xcconfig"; sourceTree = "<group>"; };
 		EC42E6DC22C255BF00EA086B /* Rx_MVVM_ToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rx_MVVM_ToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC42E6DF22C255BF00EA086B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		EC42E6E122C255BF00EA086B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		EC42E6E422C255BF00EA086B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EC42E6E622C255C000EA086B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EC42E6E922C255C000EA086B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC42E6EB22C255C000EA086B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,6 +71,30 @@
 		EC42E6FB22C255C000EA086B /* Rx_MVVM_ToDoListUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Rx_MVVM_ToDoListUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC42E6FF22C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rx_MVVM_ToDoListUITests.swift; sourceTree = "<group>"; };
 		EC42E70122C255C000EA086B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EC42E70D22C25F0800EA086B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EC42E71B22C2604900EA086B /* userIDs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userIDs.swift; sourceTree = "<group>"; };
+		EC42E71C22C2604900EA086B /* TaskModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskModel.swift; sourceTree = "<group>"; };
+		EC42E71D22C2604900EA086B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		EC42E71E22C2604A00EA086B /* userIDType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userIDType.swift; sourceTree = "<group>"; };
+		EC42E72322C2605A00EA086B /* Services.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
+		EC42E72522C2606400EA086B /* TDLUserService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TDLUserService.swift; sourceTree = "<group>"; };
+		EC42E72622C2606400EA086B /* UserService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		EC42E72922C2606B00EA086B /* SceneType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneType.swift; sourceTree = "<group>"; };
+		EC42E72A22C2606C00EA086B /* SceneCoordinatorType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneCoordinatorType.swift; sourceTree = "<group>"; };
+		EC42E72B22C2606C00EA086B /* SceneTransitionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneTransitionType.swift; sourceTree = "<group>"; };
+		EC42E72F22C2607300EA086B /* SceneCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneCoordinator.swift; sourceTree = "<group>"; };
+		EC42E73022C2607300EA086B /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
+		EC42E73322C2607C00EA086B /* GoogleAutheficationServiceError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleAutheficationServiceError.swift; sourceTree = "<group>"; };
+		EC42E73422C2607C00EA086B /* GoogleAutheficationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoogleAutheficationService.swift; sourceTree = "<group>"; };
+		EC42E73722C2608400EA086B /* FacebookAutheficationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookAutheficationService.swift; sourceTree = "<group>"; };
+		EC42E73922C2609000EA086B /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		EC42E73A22C2609000EA086B /* LoginViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		EC42E73D22C2609600EA086B /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		EC42E73E22C2609600EA086B /* NavigationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationViewModel.swift; sourceTree = "<group>"; };
+		EC42E74122C2609C00EA086B /* SplashViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
+		EC42E74222C2609C00EA086B /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		EC42E74522C260A300EA086B /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		EC42E74622C260A300EA086B /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +137,6 @@
 				460B70361C8496D4E3FD70B3 /* Pods-Rx_MVVM_ToDoList.debug.xcconfig */,
 				DC12E94D8F297631A3A7B428 /* Pods-Rx_MVVM_ToDoList.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -122,12 +165,14 @@
 		EC42E6DE22C255BF00EA086B /* Rx_MVVM_ToDoList */ = {
 			isa = PBXGroup;
 			children = (
+				EC42E71522C25F9600EA086B /* Models */,
+				EC42E71422C25F8B00EA086B /* Services */,
+				EC42E70F22C25F5A00EA086B /* UI */,
 				EC42E6DF22C255BF00EA086B /* AppDelegate.swift */,
-				EC42E6E122C255BF00EA086B /* ViewController.swift */,
-				EC42E6E322C255BF00EA086B /* Main.storyboard */,
 				EC42E6E622C255C000EA086B /* Assets.xcassets */,
 				EC42E6E822C255C000EA086B /* LaunchScreen.storyboard */,
 				EC42E6EB22C255C000EA086B /* Info.plist */,
+				EC42E70D22C25F0800EA086B /* GoogleService-Info.plist */,
 			);
 			path = Rx_MVVM_ToDoList;
 			sourceTree = "<group>";
@@ -148,6 +193,122 @@
 				EC42E70122C255C000EA086B /* Info.plist */,
 			);
 			path = Rx_MVVM_ToDoListUITests;
+			sourceTree = "<group>";
+		};
+		EC42E70F22C25F5A00EA086B /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E71322C25F7F00EA086B /* Navigation */,
+				EC42E71222C25F7700EA086B /* ViewController */,
+				EC42E71122C25F7000EA086B /* Splash */,
+				EC42E71022C25F6700EA086B /* Login */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		EC42E71022C25F6700EA086B /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E73922C2609000EA086B /* LoginViewController.swift */,
+				EC42E73A22C2609000EA086B /* LoginViewModel.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		EC42E71122C25F7000EA086B /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E74222C2609C00EA086B /* SplashViewController.swift */,
+				EC42E74122C2609C00EA086B /* SplashViewModel.swift */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
+		EC42E71222C25F7700EA086B /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E74522C260A300EA086B /* ViewController.swift */,
+				EC42E74622C260A300EA086B /* ViewModel.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		EC42E71322C25F7F00EA086B /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E73D22C2609600EA086B /* NavigationController.swift */,
+				EC42E73E22C2609600EA086B /* NavigationViewModel.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		EC42E71422C25F8B00EA086B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E72322C2605A00EA086B /* Services.swift */,
+				EC42E71922C25FDE00EA086B /* SceneCoordinator */,
+				EC42E71822C25FCA00EA086B /* UserService */,
+				EC42E71722C25FB900EA086B /* GoogleAutheficationService */,
+				EC42E71622C25FA600EA086B /* FacebookAutheficationService */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		EC42E71522C25F9600EA086B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E71C22C2604900EA086B /* TaskModel.swift */,
+				EC42E71D22C2604900EA086B /* User.swift */,
+				EC42E71B22C2604900EA086B /* userIDs.swift */,
+				EC42E71E22C2604A00EA086B /* userIDType.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		EC42E71622C25FA600EA086B /* FacebookAutheficationService */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E73722C2608400EA086B /* FacebookAutheficationService.swift */,
+			);
+			path = FacebookAutheficationService;
+			sourceTree = "<group>";
+		};
+		EC42E71722C25FB900EA086B /* GoogleAutheficationService */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E73422C2607C00EA086B /* GoogleAutheficationService.swift */,
+				EC42E73322C2607C00EA086B /* GoogleAutheficationServiceError.swift */,
+			);
+			path = GoogleAutheficationService;
+			sourceTree = "<group>";
+		};
+		EC42E71822C25FCA00EA086B /* UserService */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E72522C2606400EA086B /* TDLUserService.swift */,
+				EC42E72622C2606400EA086B /* UserService.swift */,
+			);
+			path = UserService;
+			sourceTree = "<group>";
+		};
+		EC42E71922C25FDE00EA086B /* SceneCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E73022C2607300EA086B /* Scene.swift */,
+				EC42E72F22C2607300EA086B /* SceneCoordinator.swift */,
+				EC42E71A22C25FE600EA086B /* Protocols */,
+			);
+			path = SceneCoordinator;
+			sourceTree = "<group>";
+		};
+		EC42E71A22C25FE600EA086B /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				EC42E72A22C2606C00EA086B /* SceneCoordinatorType.swift */,
+				EC42E72B22C2606C00EA086B /* SceneTransitionType.swift */,
+				EC42E72922C2606B00EA086B /* SceneType.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,8 +419,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC42E6EA22C255C000EA086B /* LaunchScreen.storyboard in Resources */,
+				EC42E70E22C25F0800EA086B /* GoogleService-Info.plist in Resources */,
 				EC42E6E722C255C000EA086B /* Assets.xcassets in Resources */,
-				EC42E6E522C255BF00EA086B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,8 +544,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC42E6E222C255BF00EA086B /* ViewController.swift in Sources */,
+				EC42E72722C2606400EA086B /* TDLUserService.swift in Sources */,
+				EC42E72122C2604A00EA086B /* User.swift in Sources */,
+				EC42E72422C2605B00EA086B /* Services.swift in Sources */,
+				EC42E74322C2609C00EA086B /* SplashViewModel.swift in Sources */,
+				EC42E73122C2607400EA086B /* SceneCoordinator.swift in Sources */,
+				EC42E73222C2607400EA086B /* Scene.swift in Sources */,
+				EC42E72E22C2606C00EA086B /* SceneTransitionType.swift in Sources */,
+				EC42E74722C260A300EA086B /* ViewController.swift in Sources */,
+				EC42E72022C2604A00EA086B /* TaskModel.swift in Sources */,
+				EC42E72822C2606400EA086B /* UserService.swift in Sources */,
+				EC42E73C22C2609000EA086B /* LoginViewModel.swift in Sources */,
+				EC42E72222C2604A00EA086B /* userIDType.swift in Sources */,
+				EC42E72C22C2606C00EA086B /* SceneType.swift in Sources */,
+				EC42E72D22C2606C00EA086B /* SceneCoordinatorType.swift in Sources */,
+				EC42E73F22C2609600EA086B /* NavigationController.swift in Sources */,
 				EC42E6E022C255BF00EA086B /* AppDelegate.swift in Sources */,
+				EC42E73822C2608400EA086B /* FacebookAutheficationService.swift in Sources */,
+				EC42E73B22C2609000EA086B /* LoginViewController.swift in Sources */,
+				EC42E74022C2609600EA086B /* NavigationViewModel.swift in Sources */,
+				EC42E73622C2607D00EA086B /* GoogleAutheficationService.swift in Sources */,
+				EC42E73522C2607D00EA086B /* GoogleAutheficationServiceError.swift in Sources */,
+				EC42E71F22C2604A00EA086B /* userIDs.swift in Sources */,
+				EC42E74822C260A300EA086B /* ViewModel.swift in Sources */,
+				EC42E74422C2609C00EA086B /* SplashViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,14 +603,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		EC42E6E322C255BF00EA086B /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				EC42E6E422C255BF00EA086B /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		EC42E6E822C255C000EA086B /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
