@@ -10,9 +10,14 @@ import Foundation
 import RxCocoa
 
 
-class User {
-    var IDs = userIDs()
-    var uuid = ""//BehaviorRelay<String>(value: "")
-    var sync = false
+struct User {
+    var userID = ""
+    var uuid = ""
+    var idType: IDType
     
+    init() {
+        userID = ""
+        uuid = ""
+        idType = .none
+    }
 }

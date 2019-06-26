@@ -29,6 +29,9 @@ class SplashViewModel: ViewModel {
     
     func navigateToTasksWithUserID(_ identifier: String) {
         print("navigateToTasks")
+        let model = TasksListViewModel(services: services)
+        let scene = Scene.tasksList(model)
+        services.sceneCoordinator.transition(to: scene, type: .push, animated: true)
     }
     
 }

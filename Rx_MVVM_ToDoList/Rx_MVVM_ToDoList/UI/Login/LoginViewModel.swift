@@ -24,6 +24,8 @@ class LoginViewModel: ViewModel {
     }
     
     func navigateToTask() {
-        print("navigation To task")
+        let model = TasksListViewModel(services: services)
+        let scene = Scene.tasksList(model)
+        services.sceneCoordinator.transition(to: scene, type: .push, animated: true)
     }
 }

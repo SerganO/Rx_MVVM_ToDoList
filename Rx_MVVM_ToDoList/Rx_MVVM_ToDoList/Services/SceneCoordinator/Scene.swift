@@ -13,10 +13,10 @@ enum Scene {
     case navigation(NavigationViewModel)
     case splash(SplashViewModel)
     case login(LoginViewModel)
+    case tasksList(TasksListViewModel)
     
 //    case addTask(AddTaskViewModel)
 //    case date(DateViewModel)
-//    case tasksList(TasksListViewModel)
 }
 
 
@@ -34,9 +34,9 @@ extension Scene: SceneType {
         case .login(let viewModel):
             return LoginViewController(viewModel: viewModel)
 
-//        
-//        case .tasksList(let viewModel):
-//            return TasksListViewController(viewModel: viewModel)
+        
+        case .tasksList(let viewModel):
+            return TasksListViewController(viewModel: viewModel)
 //            
 //        case .addTask(let viewModel):
 //            return AddTaskViewController(viewModel: viewModel)

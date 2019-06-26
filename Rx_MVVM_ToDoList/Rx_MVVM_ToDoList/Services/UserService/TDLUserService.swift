@@ -13,12 +13,14 @@ import FacebookLogin
 enum IDType {
     case google
     case facebook
+    case none
 }
 
 final class TDLUserService: UserService {
 
     private var googleService: GoogleAutheficationService
     private var facebookService: FacebookAutheficationService
+    private var currentUser: User?
     
     init(googleAuthenficationService: GoogleAutheficationService, facebookAuthenficationService: FacebookAutheficationService) {
         googleService = googleAuthenficationService
@@ -31,21 +33,34 @@ final class TDLUserService: UserService {
     
     func actualUserID(_ force: Bool) -> Observable<String> {
         
+        if let user = currentUser {
+            return Observable<String>.just(user.uuid)
+        }
+        
         var observable: Observable<(IDType, String?)>
         
         if googleService.checkLocalGoogleAuthenfication() {
             observable = googleService.googleAuthenfication(force: force).map({ (IDType.google, $0?.userID) })
-        } else {
+        } else if facebookService.checkLocalFacebookAuthenfication() {
             observable = facebookService.facebookAuthenfication().map({ (IDType.facebook, $0.userId) })
+        } else {
+            let google = googleService.googleAuthenfication().map({ (IDType.google, $0?.userID) })
+            let facebook = facebookService.facebookAuthenfication().map({ (IDType.facebook, $0.userId) })
+            observable = Observable.merge(google,facebook)
         }
         
-//        let google = googleService.googleAuthenfication(force: force).map({ (IDType.google, $0?.userID) })
-//        let facebook = facebookService.facebookAuthenfication().map({ (IDType.facebook, $0.userId) })
+        
         
         return observable
             .filter({ $0.1 != nil })
-            .do(onNext: { print( "userID: " + $0.1! + "\n" + "\($0.0 == .google ? "GGGG" : "FFFF" )" ) })
-            .map({ _ in UUID().uuidString })
+            .do(onNext: { print( "userID: " + $0.1! + "\n" + "\($0.0 == .google ? "GGGG" : "FFFF" )" )
+            })
+            .map({ user in
+                self.currentUser = User()
+                self.currentUser?.userID = user.1!
+                self.currentUser?.idType = user.0
+                self.currentUser?.uuid = UUID().uuidString
+                return self.currentUser!.uuid })
         
         
 //        return googleService.googleAuthenfication(force: force)
