@@ -9,7 +9,7 @@
 import Foundation
 import Firebase
 
-struct TaskModel {
+struct TaskModel: Equatable {
     
     var text = ""
     var createDate = Date()

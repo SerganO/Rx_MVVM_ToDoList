@@ -1,0 +1,25 @@
+{
+  "images" : [
+    {
+      "idiom" : "iphone",
+      "filename" : "icons8-facebook-filled-48.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "iphone",
+      "filename" : "icons8-facebook-filled-96.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "iphone",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "original"
+  }
+}

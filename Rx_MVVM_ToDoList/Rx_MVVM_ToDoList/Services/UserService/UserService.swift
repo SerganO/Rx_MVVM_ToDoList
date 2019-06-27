@@ -14,9 +14,13 @@ protocol UserService {
     
     func isExistsCredentials() -> Bool
     
-    func actualUserID(_ force: Bool) -> Observable<String>
+    func actualUserToken(_ force: Bool) -> Observable<UserToken>
     
     func authorizationWithGoogleFlow() -> Observable<(Bool, UIViewController)>
     
     func getFacebookButtonDelegate() -> LoginButtonDelegate
+    
+    func clearData()
+    
+    func sync() -> Observable<Bool>
 }

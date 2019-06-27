@@ -16,15 +16,18 @@ class LoginViewModel: ViewModel {
     override init(services: Services) {
         super.init(services: services)
         
-        services.userService.actualUserID(false).subscribe(onNext: { [weak self] (userUUID) in
+        services.userService.actualUserToken(false).subscribe(onNext: { [weak self] (user) in
             guard let self = self else { return }
-            print(userUUID)
-            self.navigateToTask()
+            print(user)
+            self.navigateToTask(with: user)
         }).disposed(by: disposeBag)
     }
     
-    func navigateToTask() {
-        let model = TasksListViewModel(services: services)
+    func navigateToTask(with user: UserToken) {
+        print("navigateToTask")
+        print(user)
+        
+        let model = TasksListViewModel(services: services, user: user)
         let scene = Scene.tasksList(model)
         services.sceneCoordinator.transition(to: scene, type: .push, animated: true)
     }

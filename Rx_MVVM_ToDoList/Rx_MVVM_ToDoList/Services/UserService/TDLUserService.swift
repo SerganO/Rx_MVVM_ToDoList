@@ -10,31 +10,31 @@ import Foundation
 import RxSwift
 import FacebookLogin
 
-enum IDType {
-    case google
-    case facebook
-    case none
-}
+
 
 final class TDLUserService: UserService {
-
+    
+    
     private var googleService: GoogleAutheficationService
     private var facebookService: FacebookAutheficationService
-    private var currentUser: User?
+    private var databaseServise: DatabaseService
+    private var currentUser: UserToken?
+    private let disposeBag = DisposeBag()
     
-    init(googleAuthenficationService: GoogleAutheficationService, facebookAuthenficationService: FacebookAutheficationService) {
+    init(googleAuthenficationService: GoogleAutheficationService, facebookAuthenficationService: FacebookAutheficationService, databaseService: DatabaseService) {
         googleService = googleAuthenficationService
         facebookService = facebookAuthenficationService
+        self.databaseServise = databaseService
     }
     
     func isExistsCredentials() -> Bool {
         return googleService.checkLocalGoogleAuthenfication() || facebookService.checkLocalFacebookAuthenfication()
     }
     
-    func actualUserID(_ force: Bool) -> Observable<String> {
+    func actualUserToken(_ force: Bool) -> Observable<UserToken> {
         
         if let user = currentUser {
-            return Observable<String>.just(user.uuid)
+            return Observable<UserToken>.just(user)
         }
         
         var observable: Observable<(IDType, String?)>
@@ -49,24 +49,19 @@ final class TDLUserService: UserService {
             observable = Observable.merge(google,facebook)
         }
         
-        
-        
         return observable
             .filter({ $0.1 != nil })
-            .do(onNext: { print( "userID: " + $0.1! + "\n" + "\($0.0 == .google ? "GGGG" : "FFFF" )" )
+            .do(onNext: {
+                self.currentUser = UserToken()
+                self.currentUser?.idType = $0.0
+                self.currentUser?.userID = $0.1!
+                print( "userID: " + $0.1! + "\n" + "\($0.0 == .google ? "GGGG" : "FFFF" )" )
+            }).flatMap({ user in
+                return self.databaseServise.getUserUUID(userID: user.1!, type: user.0)
+            }).map({ (uuid) in
+                self.currentUser?.uuid = uuid
+                return self.currentUser!
             })
-            .map({ user in
-                self.currentUser = User()
-                self.currentUser?.userID = user.1!
-                self.currentUser?.idType = user.0
-                self.currentUser?.uuid = UUID().uuidString
-                return self.currentUser!.uuid })
-        
-        
-//        return googleService.googleAuthenfication(force: force)
-//            .filter({ $0?.userID != nil })
-//            .do(onNext: { print( "userID: \(($0?.userID ?? ""))" ) })
-//            .map({ _ in UUID().uuidString })
     }
     
     func authorizationWithGoogleFlow() -> Observable<(Bool, UIViewController)> {
@@ -75,6 +70,35 @@ final class TDLUserService: UserService {
     
     func getFacebookButtonDelegate() -> LoginButtonDelegate {
         return facebookService
+    }
+    
+    func clearData() {
+        currentUser = nil
+    }
+    
+    func sync() -> Observable<Bool> {
+        return Observable.create({ (observer) -> Disposable in
+            if self.googleService.checkLocalGoogleAuthenfication() {
+                self.facebookService.login().subscribe(onNext: { (accessToken) in
+                    self.databaseServise.syncUserID(newUserID: accessToken.userId!, newType: .facebook, with: self.currentUser!.uuid).subscribe(onNext: { (result) in
+                        if result {
+                            observer.onNext(true)
+                        }
+                    }).disposed(by: self.disposeBag)
+                }).disposed(by: self.disposeBag)
+            } else {
+                self.googleService.googleAuthenfication(force: true).subscribe(onNext: { (googleUser) in
+                    if let user = googleUser {
+                        self.databaseServise.syncUserID(newUserID: user.userID, newType: .google, with: self.currentUser!.uuid).subscribe(onNext: { (result) in
+                            if result {
+                                observer.onNext(true)
+                            }
+                        }).disposed(by: self.disposeBag)
+                    }
+                }).disposed(by: self.disposeBag)
+            }
+            return Disposables.create()
+        })
     }
     
 }

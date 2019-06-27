@@ -13,23 +13,21 @@ class Services {
     let googleAutheficationService: GoogleAutheficationService
     let facebookAutheficationService: FacebookAutheficationService
     let userService: UserService
-    
-//    let database: DatabaseService
-//    let tasks: TasksService
-//    let date: DateService
-//    let notification: NotificationService
-//    var facebookAuth: AuthorizationService
-//    var googleAuth: AuthorizationService
-//
+    let databaseService: DatabaseService
+    let tasksService: TasksService
+    let notificationService: NotificationService
     
     public init(sceneCoordinator: SceneCoordinator) {
         self.sceneCoordinator = sceneCoordinator
+        self.databaseService = FirebaseDatabaseService()
         self.googleAutheficationService = GoogleAutheficationService()
         self.facebookAutheficationService = FacebookAutheficationService()
-        self.userService = TDLUserService(googleAuthenficationService: googleAutheficationService, facebookAuthenficationService: facebookAutheficationService)
+        self.userService = TDLUserService(googleAuthenficationService: googleAutheficationService, facebookAuthenficationService: facebookAutheficationService, databaseService: databaseService)
         
         
-//        database = FirebaseDatabaseService()
+        
+        self.tasksService = TDLTasksService(database: databaseService)
+        self.notificationService = TDLNotificationService()
 //        tasks = SimpleTasksService(database: database)
 //        date = SimpleDateService()
 //        notification = SimpleNotificationService()

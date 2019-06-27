@@ -1,5 +1,5 @@
 //
-//  User.swift
+//  UserToken.swift
 //  MVVM_ToDoList
 //
 //  Created by Trainee on 6/20/19.
@@ -10,7 +10,7 @@ import Foundation
 import RxCocoa
 
 
-struct User {
+struct UserToken {
     var userID = ""
     var uuid = ""
     var idType: IDType

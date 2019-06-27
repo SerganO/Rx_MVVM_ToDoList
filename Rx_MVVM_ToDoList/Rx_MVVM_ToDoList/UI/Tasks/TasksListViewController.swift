@@ -24,15 +24,12 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
     var reorderButton = UIBarButtonItem()
     let dataSource = RxTableViewSectionedReloadDataSource<SectionModel<String, TaskModel>>(configureCell: { dataSource, tableView, indexPath, item in
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskCell.Identifier, for: indexPath) as! TaskCell
-        //TasksListViewModel.configureTaskCell(item, cell: cell)
+        TasksListViewModel.configureTaskCell(item, cell: cell)
         return cell
     })
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.services.userService.actualUserID(false).subscribe(onNext: { (uuid) in
-            print(uuid)
-        }).disposed(by: disposeBag)
         
         navigationItem.title = "To Do List"
         
@@ -76,21 +73,14 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
         navigationItem.leftBarButtonItem = logOutButton
         
         let sync = UIButton()
-        
-//        if viewModel.services.user.user.sync {
-//            sync.setImage(UIImage(named:"AllDone"), for: .normal)
-//        } else if viewModel.services.user.user.IDs.facebookID == "" {
-//            sync.setImage(UIImage(named:"Facebook"), for: .normal)
-//        } else {
-//            sync.setImage(UIImage(named:"GoogleIcon"), for: .normal)
-//        }
-        
+        sync.setTitle("...", for: .normal)
         sync.setTitleColor(.black, for: .normal)
         sync.setTitleColor(.gray, for: .highlighted)
         sync.rx.tap.bind {
             self.syncButtonTap()
             }.disposed(by: disposeBag)
         syncButton = UIBarButtonItem.init(customView: sync)
+        setupSyncImage()
         navigationItem.leftBarButtonItems?.append(syncButton)
         
         navigationItem.hidesBackButton = true
@@ -114,21 +104,54 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
         
     }
     
-    func reorderButtonTap() {
-        
-    }
-    
-    
-    
-    
-    func addButtonTap() {
-        viewModel.services.userService.actualUserID(false).subscribe(onNext: { (uuid) in
-            print(uuid)
+    func setupSyncImage() {
+        viewModel.services.databaseService.getSync(for: viewModel.currentUser.uuid).subscribe(onNext: { (isSync) in
+            if let sync = self.syncButton.customView as? UIButton {
+                sync.setTitle(nil, for: .normal)
+                if isSync {
+                    sync.setImage(UIImage(named:"AllDone"), for: .normal)
+                } else {
+                    if self.viewModel.currentUser.idType == .facebook {
+                        sync.setImage(UIImage(named:"GoogleIcon"), for: .normal)
+                    } else {
+                        sync.setImage(UIImage(named:"Facebook"), for: .normal)
+                    }
+                }
+            }
+            
         }).disposed(by: disposeBag)
     }
     
+    func reorderButtonTap() {
+        viewModel.updateId()
+        tableView.isEditing = !tableView.isEditing
+    }
+    
+    func addButtonTap() {
+        viewModel.addTask()
+        tableView.reloadData()
+    }
+    
     func syncButtonTap() {
-       
+        viewModel.services.databaseService.getSync(for: viewModel.currentUser.uuid).subscribe(onNext: { (isSync) in
+            guard !isSync else { return }
+            
+            
+            self.viewModel.services.userService.sync().subscribe(onNext: { (result) in
+                if let button = self.syncButton.customView as? UIButton {
+                    button.setImage(UIImage(named:"AllDone"), for: .normal)
+                }
+            }).disposed(by: self.disposeBag)
+            
+            
+            
+            
+            
+            
+            
+        }).disposed(by: disposeBag)
+        
+        
     }
     
     func logOutButtonTap() {
@@ -150,11 +173,10 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
         UserDefaults.standard.removePersistentDomain(forName: domain)
         UserDefaults.standard.synchronize()
         
-        GIDSignIn.sharedInstance()?.signOut()
-        //viewModel.services.facebookAuth.userID = ""
-        //viewModel.services.googleAuth.userID = ""
         
-        //viewModel.services.notification.removeAllNotification()
+        GIDSignIn.sharedInstance()?.signOut()
+        viewModel.services.notificationService.removeAllNotification()
+        viewModel.services.userService.clearData()
         viewModel.services.sceneCoordinator.pop()
     }
     
@@ -171,9 +193,7 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
             guard let cell = self.tableView.cellForRow(at: indexPath) as? TaskCell else {
                 return
             }
-            
-            //self.viewModel.selectCell(cell, indexPath: indexPath)
-            
+            self.viewModel.selectCell(cell, indexPath: indexPath)
             if let selectedRowIndexPath = self.tableView.indexPathForSelectedRow {
                 self.tableView.deselectRow(at: selectedRowIndexPath, animated: true)
             }
@@ -198,7 +218,11 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
                 }
             } else  {
                 let task = self.viewModel.sections.value[sourceIndexPath.section].items[sourceIndexPath.row]
-                //self.viewModel.services.tasks.editTask(task, editItems: [["text":""],["text":task.text]], for: self.viewModel.services.user.user.getUserUUID())
+                self.viewModel.services.tasksService.editTask(task, editItems: [["text":""],["text":task.text]], for: self.viewModel.currentUser.uuid).subscribe(onNext: { (result) in
+                    if result {
+                        self.viewModel.updateId()
+                    }
+                }).disposed(by: self.disposeBag)
                 self.tableView.reloadData()
             }
         }).disposed(by: disposeBag)
@@ -220,22 +244,21 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
     
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?  {
-//        let editAction = UITableViewRowAction(style: .normal, title: "Edit" , handler: { (action:UITableViewRowAction, indexPath: IndexPath) -> Void in
-//            self.viewModel.updateId()
-//            let task = self.viewModel.sections.value[indexPath.section].items[indexPath.row]
-//            self.viewModel.editTask(task)
-//
-//        })
-//        let deleteAction = UITableViewRowAction(style: .default, title: "Delete" , handler: { (action:UITableViewRowAction, indexPath:IndexPath) -> Void in
-//            let task = self.viewModel.sections.value[indexPath.section].items[indexPath.row]
-//            self.viewModel.deleteTask(task,indexPath: indexPath )
-//
-//            tableView.rx.itemDeleted.subscribe().disposed(by: self.viewModel.disposeBag)
-//
-//        })
-//
-//        return [deleteAction,editAction]
-        return []
+        let editAction = UITableViewRowAction(style: .normal, title: "Edit" , handler: { (action:UITableViewRowAction, indexPath: IndexPath) -> Void in
+            self.viewModel.updateId()
+            let task = self.viewModel.sections.value[indexPath.section].items[indexPath.row]
+            self.viewModel.editTask(task)
+            
+        })
+        let deleteAction = UITableViewRowAction(style: .default, title: "Delete" , handler: { (action:UITableViewRowAction, indexPath:IndexPath) -> Void in
+            let task = self.viewModel.sections.value[indexPath.section].items[indexPath.row]
+            self.viewModel.deleteTask(task,indexPath: indexPath )
+            
+            tableView.rx.itemDeleted.subscribe().disposed(by: self.viewModel.disposeBag)
+            
+        })
+        
+        return [deleteAction,editAction]
     }
     
     
