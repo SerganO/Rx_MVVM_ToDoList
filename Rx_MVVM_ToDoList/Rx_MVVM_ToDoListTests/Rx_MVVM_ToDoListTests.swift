@@ -72,6 +72,11 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         let promise = expectation(description: "Test parsing")
         let n = 5
         promise.expectedFulfillmentCount = n
+        var count = 0
+        let taskPromise = expectation(description: "tasks")
+        taskPromise.expectedFulfillmentCount = n
+        let result = testScheduler.createObserver([Section].self)
+        
         testScheduler.scheduleAt(0) {
             var mockData = [TaskModel]()
             
@@ -93,24 +98,16 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
                 }).disposed(by: self.disposeBag)
             }
             
-        }
-        testScheduler.start()
-        wait(for: [promise], timeout: 5)
-        testScheduler.stop()
-        
-        
-        let taskPromise = expectation(description: "tasks")
-        let result = testScheduler.createObserver([Section].self)
-        
-        testScheduler.scheduleAt(0) {
-            self.databaseService.tasks(for: self.uuid).do(onNext: { (_) in
-                promise.fulfill()
+            
+            self.databaseService.tasks(for: self.uuid).do(onNext: { (sections) in
+                count = sections[0].items.count
+                taskPromise.fulfill()
             }).subscribe(result).disposed(by: self.disposeBag)
         }
         testScheduler.start()
-        wait(for: [taskPromise], timeout: 5)
+        wait(for: [promise, taskPromise], timeout: 5)
         testScheduler.stop()
-        
+        XCTAssert(count == n)
         //XCTAssert(result.events.first?.value.element?.isEmpty == false)
     }
     
