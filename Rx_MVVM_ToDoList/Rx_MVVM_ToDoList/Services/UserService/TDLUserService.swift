@@ -77,28 +77,22 @@ final class TDLUserService: UserService {
     }
     
     func sync() -> Observable<Bool> {
-        return Observable.create({ (observer) -> Disposable in
-            if self.googleService.checkLocalGoogleAuthenfication() {
-                self.facebookService.login().subscribe(onNext: { (accessToken) in
-                    self.databaseServise.syncUserID(newUserID: accessToken.userId!, newType: .facebook, with: self.currentUser!.uuid).subscribe(onNext: { (result) in
-                        if result {
-                            observer.onNext(true)
-                        }
-                    }).disposed(by: self.disposeBag)
-                }).disposed(by: self.disposeBag)
-            } else {
-                self.googleService.googleAuthenfication(force: true).subscribe(onNext: { (googleUser) in
-                    if let user = googleUser {
-                        self.databaseServise.syncUserID(newUserID: user.userID, newType: .google, with: self.currentUser!.uuid).subscribe(onNext: { (result) in
-                            if result {
-                                observer.onNext(true)
-                            }
-                        }).disposed(by: self.disposeBag)
-                    }
-                }).disposed(by: self.disposeBag)
-            }
-            return Disposables.create()
-        })
+        
+        guard let current = currentUser else { return Observable.empty() }
+        
+        if googleService.checkLocalGoogleAuthenfication() {
+            return facebookService.login()
+                .filter({ $0.userId != nil })
+                .flatMapLatest ({ [databaseServise] (userToken) -> Observable<Bool> in
+                    return databaseServise.syncUserID(newUserID: userToken.userId!, newType: .facebook, with: current.uuid)
+                })
+        } else {
+            return googleService.googleAuthenfication(force: true)
+                .filter({ $0 != nil })
+                .flatMapLatest ({ [databaseServise] (user) -> Observable<Bool> in
+                    databaseServise.syncUserID(newUserID: user!.userID, newType: .google, with: current.uuid)
+                
+            })
+        }
     }
-    
 }
