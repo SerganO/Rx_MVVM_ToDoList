@@ -55,7 +55,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
             
             
             for task in mockData {
-                self.databaseService.addTask(task,for: self.uuid).subscribe(onNext: { (_) in
+                self.databaseService.addTask(task,for: "TEST_USER").subscribe(onNext: { (_) in
                     promise.fulfill()
                 }).disposed(by: self.disposeBag)
             }
@@ -68,47 +68,52 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
     }
     
     func test_tasks() {
-        
-        let promise = expectation(description: "Test parsing")
-        let n = 5
-        promise.expectedFulfillmentCount = n
         var count = 0
+        let n = 6
+        
         let taskPromise = expectation(description: "tasks")
         taskPromise.expectedFulfillmentCount = n
+        
         let result = testScheduler.createObserver([Section].self)
         
-        testScheduler.scheduleAt(0) {
-            var mockData = [TaskModel]()
-            
-            for i in 1...n {
-                let mockTask = TaskModel(
-                    text: "task",
-                    createDate: Date(),
-                    notificationDate: nil,
-                    completed: false,
-                    orderID: i,
-                    uuid: UUID())
-                mockData.append(mockTask)
-            }
-            
-            
-            for task in mockData {
-                self.databaseService.addTask(task,for: self.uuid).subscribe(onNext: { (_) in
-                    promise.fulfill()
-                }).disposed(by: self.disposeBag)
-            }
-            
-            
-            self.databaseService.tasks(for: self.uuid).do(onNext: { (sections) in
+        let taskScheduler = TestScheduler(initialClock: 0)
+        taskScheduler.scheduleAt(5) {
+            self.databaseService.tasks(for: "TEST_USER").do(onNext: { (sections) in
                 count = sections[0].items.count
                 taskPromise.fulfill()
             }).subscribe(result).disposed(by: self.disposeBag)
         }
-        testScheduler.start()
-        wait(for: [promise, taskPromise], timeout: 5)
-        testScheduler.stop()
+        
+        taskScheduler.start()
+        wait(for: [taskPromise], timeout: 5)
+        taskScheduler.stop()
         XCTAssert(count == n)
-        //XCTAssert(result.events.first?.value.element?.isEmpty == false)
+    }
+    
+    func test_editTask() {
+        let promise = expectation(description: "Test parsing")
+        var text = ""
+        testScheduler.scheduleAt(0) {
+            let mockData = TaskModel()
+            self.databaseService.addTask(mockData, for: "TEST_EDIT_USER").subscribe(onNext: { (_) in
+                self.databaseService.editTask(mockData, editItems: [["text": "EDIT_TEST"]], for: "TEST_EDIT_USER").subscribe(onNext: { (_) in
+                    self.databaseService.tasks(for: "TEST_EDIT_USER").subscribe(onNext: { (section) in
+                        for task in section[0].items {
+                            if task.uuid == mockData.uuid {
+                                text = task.text
+                                promise.fulfill()
+                            }
+                        }
+                    })
+                })
+            })
+            
+            
+        }
+        testScheduler.start()
+        wait(for: [promise], timeout: 10)
+        testScheduler.stop()
+        XCTAssert(text == "EDIT_TEST")
     }
     
     func testPerformanceExample() {
