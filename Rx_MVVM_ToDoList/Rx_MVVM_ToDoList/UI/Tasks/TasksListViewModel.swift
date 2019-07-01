@@ -78,12 +78,8 @@ class TasksListViewModel: ViewModel {
         let task = TaskModel()
         let taskRelay = BehaviorRelay<TaskModel>.init(value: task)
         
-        
         services.sceneCoordinator.transition(to: Scene.addTask(AddTaskViewModel(services: services, task: taskRelay)), type: .push, animated: true)
         
-       
-        
-    
         taskRelay.bind { (newTask) in
             guard newTask != task else { return }
             

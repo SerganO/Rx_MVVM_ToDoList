@@ -17,7 +17,7 @@ struct TaskModel: Equatable {
     var completed = false
     var orderID = -1
     var uuid = UUID()
-
+    
     static func modelFromDictionary(_ dictionary: [String: Any]) -> TaskModel? {
         guard
             let text = dictionary["text"] as? String,
@@ -27,9 +27,7 @@ struct TaskModel: Equatable {
             let stringUuid = dictionary["uuid"] as? String,
             let orderID = dictionary["orderID"] as? Int,
             let uuid = UUID(uuidString: stringUuid)
-            else {
-                return nil
-        }
+            else { return nil }
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .medium

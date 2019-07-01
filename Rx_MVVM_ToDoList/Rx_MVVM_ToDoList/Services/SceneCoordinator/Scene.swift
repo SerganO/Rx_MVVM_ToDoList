@@ -9,7 +9,7 @@
 import UIKit
 
 enum Scene {
-
+    
     case navigation(NavigationViewModel)
     case splash(SplashViewModel)
     case login(LoginViewModel)
@@ -17,7 +17,6 @@ enum Scene {
     case addTask(AddTaskViewModel)
     case date(DateViewModel)
 }
-
 
 extension Scene: SceneType {
     
@@ -32,8 +31,7 @@ extension Scene: SceneType {
             
         case .login(let viewModel):
             return LoginViewController(viewModel: viewModel)
-
-        
+            
         case .tasksList(let viewModel):
             return TasksListViewController(viewModel: viewModel)
             
@@ -43,8 +41,7 @@ extension Scene: SceneType {
         case .date(let viewModel):
             return DateViewController(viewModel: viewModel)
             
-            
         }
-        
     }
+    
 }

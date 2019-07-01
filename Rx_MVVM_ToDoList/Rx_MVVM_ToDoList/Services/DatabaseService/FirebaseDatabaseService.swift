@@ -16,7 +16,9 @@ class FirebaseDatabaseService: DatabaseService {
     
     func tasks(for userID: String) -> Observable<[Section]> {
         return Observable.create({ (observer) -> Disposable in
+            
             let UserRef = self.MainRef.child("users").child(userID)
+            
             UserRef.child("tasks").queryOrdered(byChild: "orderID").observe(.value) { (snapshot) in
                 var newTasks = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
                 for child in snapshot.children {
@@ -39,6 +41,7 @@ class FirebaseDatabaseService: DatabaseService {
     public func addTask(_ task: TaskModel, for userID: String) -> Observable<Bool>
     {
         return Observable.create({ (observer) -> Disposable in
+            
             let que = DispatchQueue.global()
             que.async {
                 let UserRef = self.MainRef.child("users").child(userID)
@@ -46,12 +49,14 @@ class FirebaseDatabaseService: DatabaseService {
                 taskRef.setValue(task.toDic())
                 observer.onNext(true)
             }
+            
             return Disposables.create()
         })
     }
     
     public func editTask(_ task: TaskModel, editItems:[[String: Any]], for userID: String) -> Observable<Bool> {
         return Observable.create({ (observer) -> Disposable in
+            
             let que = DispatchQueue.global()
             que.async {
                 for editItem in editItems {
@@ -60,26 +65,29 @@ class FirebaseDatabaseService: DatabaseService {
                 }
                 observer.onNext(true)
             }
+            
             return Disposables.create()
         })
     }
     
     public func deleteTask(_ task: TaskModel, for userID: String) -> Observable<Bool> {
         return Observable.create({ (observer) -> Disposable in
+            
             let que = DispatchQueue.global()
             que.async {
                 let UserRef = self.MainRef.child("users").child(userID)
                 UserRef.child("tasks").child(task.uuid.uuidString).removeValue()
                 observer.onNext(true)
             }
+            
             return Disposables.create()
         })
     }
     
     func getUserUUID(userID: String, type: IDType) -> Observable<String> {
         return Observable.create({ (observer) -> Disposable in
+            
             self.MainRef.child("Identifier").child(type.typeString).child(userID).observeSingleEvent(of: .value, with: { (snapshot) in
-                
                 
                 if snapshot.exists() {
                     observer.onNext(snapshot.value as! String)
@@ -92,12 +100,14 @@ class FirebaseDatabaseService: DatabaseService {
                     observer.onNext(uuid)
                 }
             })
+            
             return Disposables.create()
         })
     }
     
     func syncUserID(newUserID: String, newType: IDType, with uuid: String) -> Observable<Bool> {
         return Observable.create({ (observer) -> Disposable in
+            
             self.MainRef.child("Identifier").child(newType.typeString).child(newUserID).setValue(uuid)
             self.MainRef.child("users").child(uuid).child("sync").setValue(true)
             observer.onNext(true)
@@ -108,6 +118,7 @@ class FirebaseDatabaseService: DatabaseService {
     
     func getSync(for uuid: String) -> Observable<Bool> {
         return Observable.create({ (observer) -> Disposable in
+            
             self.MainRef.child("users").child(uuid).child("sync").observeSingleEvent(of: .value, with: { (snapshot) in
                 if snapshot.exists() {
                     observer.onNext(snapshot.value as? Bool ?? false)
@@ -115,11 +126,9 @@ class FirebaseDatabaseService: DatabaseService {
                     observer.onNext(false)
                 }
             })
+            
             return Disposables.create()
         })
     }
-    
-    
-    
     
 }

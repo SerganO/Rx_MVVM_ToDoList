@@ -31,4 +31,5 @@ class LoginViewModel: ViewModel {
         let scene = Scene.tasksList(model)
         services.sceneCoordinator.transition(to: scene, type: .push, animated: true)
     }
+    
 }

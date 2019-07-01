@@ -17,8 +17,6 @@ class NavigationController: UINavigationController {
         
         super.init(rootViewController: viewModel.root.viewController())
         
-        self.viewModel = viewModel
-        
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -28,7 +26,5 @@ class NavigationController: UINavigationController {
     required init?(coder aDecoder: NSCoder) {
         fatalError()
     }
-    
-    
     
 }

@@ -61,5 +61,4 @@ class LoginViewController: ViewController<LoginViewModel> {
         view.addSubview(googleSignInButton)
     }
     
-    
 }

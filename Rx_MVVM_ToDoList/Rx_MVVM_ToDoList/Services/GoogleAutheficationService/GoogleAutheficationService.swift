@@ -28,10 +28,12 @@ final class GoogleAutheficationService: NSObject, GIDSignInDelegate, GIDSignInUI
     
     public func googleAuthenfication(force: Bool = false) -> Observable<GIDGoogleUser?> {
         return Observable.create({ (observer) -> Disposable in
+            
             self.observer = observer
             if force {
                 GIDSignIn.sharedInstance().signIn()
             }
+            
             return Disposables.create()
         })
     }
@@ -48,11 +50,11 @@ final class GoogleAutheficationService: NSObject, GIDSignInDelegate, GIDSignInUI
     }
     
     // MARK: - GIDSignInUIDelegate
-
+    
     func sign(_ signIn: GIDSignIn!, present viewController: UIViewController!) {
         uiActionSubject.onNext((true, viewController))
     }
-
+    
     func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!) {
         uiActionSubject.onNext((false, viewController))
     }

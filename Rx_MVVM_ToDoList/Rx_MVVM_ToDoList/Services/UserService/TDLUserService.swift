@@ -10,8 +10,6 @@ import Foundation
 import RxSwift
 import FacebookLogin
 
-
-
 final class TDLUserService: UserService {
     
     
@@ -95,4 +93,5 @@ final class TDLUserService: UserService {
             })
         }
     }
+    
 }

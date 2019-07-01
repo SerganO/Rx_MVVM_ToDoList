@@ -9,7 +9,6 @@
 import Foundation
 import RxCocoa
 
-
 struct UserToken {
     var userID = ""
     var uuid = ""

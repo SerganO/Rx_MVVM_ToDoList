@@ -27,8 +27,8 @@ class SceneCoordinator: SceneCoordinatorType {
         }
         
         /*if let presented = current?.presentedViewController, !(presented is UISearchController) {
-            current = presented
-        }*/
+         current = presented
+         }*/
         
         if let presented = current?.presentedViewController,
             presented is ViewController {

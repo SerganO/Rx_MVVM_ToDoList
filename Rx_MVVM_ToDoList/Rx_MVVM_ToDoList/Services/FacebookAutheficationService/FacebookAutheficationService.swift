@@ -22,29 +22,30 @@ final class FacebookAutheficationService: LoginButtonDelegate {
     
     public func facebookAuthenfication() -> Observable<AccessToken> {
         return Observable.create({ (observer) -> Disposable in
+            
             if let accessToken = FBSDKAccessToken.current(), FBSDKAccessToken.currentAccessTokenIsActive() {
                 let a = AccessToken(appId: accessToken.appID, authenticationToken: accessToken.tokenString, userId: accessToken.userID, refreshDate: accessToken.refreshDate, expirationDate: accessToken.expirationDate, grantedPermissions: nil, declinedPermissions: nil)
                 observer.onNext(a)
             }
             self.observer = observer
+            
             return Disposables.create()
         })
     }
     
     func login() -> Observable<AccessToken> {
         return Observable.create({ (observer) -> Disposable in
+            
             let loginManager = LoginManager()
             loginManager.loginBehavior = .web
-            
-            
             
             loginManager.logIn(readPermissions: [.publicProfile, .email], viewController: nil, completion: { (LoginResult) in
                 if let accessToken = FBSDKAccessToken.current(), FBSDKAccessToken.currentAccessTokenIsActive() {
                     let a = AccessToken(appId: accessToken.appID, authenticationToken: accessToken.tokenString, userId: accessToken.userID, refreshDate: accessToken.refreshDate, expirationDate: accessToken.expirationDate, grantedPermissions: nil, declinedPermissions: nil)
                     observer.onNext(a)
-                    
                 }
             })
+            
             return Disposables.create()
         })
     }

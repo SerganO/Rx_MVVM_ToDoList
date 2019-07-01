@@ -12,13 +12,11 @@ import RxCocoa
 
 class TDLTasksService: TasksService {
     
-    
     private let database: DatabaseService
     
     init(database: DatabaseService) {
         self.database = database
     }
-    
     
     func tasks(for userID: String) -> Observable<[Section]> {
         return database.tasks(for: userID)
@@ -35,8 +33,5 @@ class TDLTasksService: TasksService {
     func deleteTask(_ task: TaskModel, for userID: String) -> Observable<Bool> {
         return database.deleteTask(task, for: userID)
     }
-    
-    
-    
     
 }

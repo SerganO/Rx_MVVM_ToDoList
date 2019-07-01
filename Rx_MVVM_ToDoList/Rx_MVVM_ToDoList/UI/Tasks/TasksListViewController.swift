@@ -48,7 +48,6 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
         addButton = UIBarButtonItem.init(customView: add)
         navigationItem.rightBarButtonItem = addButton
         
-        
         let reorder = UIButton()
         reorder.setImage(UIImage(named:"Reorder"), for: .normal)
         reorder.rx.tap.bind {
@@ -57,10 +56,6 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
         
         let reorderButton = UIBarButtonItem(customView: reorder)
         navigationItem.rightBarButtonItems?.append(reorderButton)
-        
-        
-        
-        
         
         let logOut = UIButton()
         logOut.setTitle("LOG OUT", for: .normal)
@@ -133,24 +128,17 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
     }
     
     func syncButtonTap() {
-        viewModel.services.databaseService.getSync(for: viewModel.currentUser.uuid).subscribe(onNext: { (isSync) in
-            guard !isSync else { return }
-            
-            
-            self.viewModel.services.userService.sync().subscribe(onNext: { (result) in
+        
+        viewModel.services.databaseService.getSync(for: viewModel.currentUser.uuid)
+            .flatMap { (isSync) -> Observable<Bool> in
+                guard !isSync else { return Observable.empty() }
+                return self.viewModel.services.userService.sync()
+            }
+            .subscribe(onNext: { (result) in
                 if let button = self.syncButton.customView as? UIButton {
                     button.setImage(UIImage(named:"AllDone"), for: .normal)
                 }
             }).disposed(by: self.disposeBag)
-            
-            
-            
-            
-            
-            
-            
-        }).disposed(by: disposeBag)
-        
         
     }
     
@@ -229,9 +217,6 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
         
     }
     
-    
-    
-    
     // MARK: - UITableViewDelegate
     
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -281,6 +266,5 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
             tableView.reloadData()
         }
     }
-    
     
 }

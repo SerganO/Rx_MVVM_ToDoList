@@ -70,7 +70,6 @@ class DateViewController: ViewController<DateViewModel> {
         blurEffectView.frame = self.view.frame
         self.view.insertSubview(blurEffectView, at: 0)
         
-        
     }
     
 }

@@ -216,5 +216,4 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         XCTAssert(text == "EDIT_TEXT")
     }
     
-    
 }

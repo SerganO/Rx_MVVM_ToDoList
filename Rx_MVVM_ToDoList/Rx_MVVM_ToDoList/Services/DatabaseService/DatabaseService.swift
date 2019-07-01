@@ -9,7 +9,6 @@
 import Foundation
 import RxSwift
 
-
 protocol DatabaseService {
     func tasks(for userID: String) -> Observable<[Section]>
     func addTask(_ task: TaskModel, for userID: String) -> Observable<Bool>
