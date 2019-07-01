@@ -27,14 +27,8 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func testExample() {
-        
-        
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
     
-    func testAddTask() {
+    func testAddDeleteTask() {
         
         let promise = expectation(description: "Test parsing")
         let n = 5
@@ -55,7 +49,8 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
             
             
             for task in mockData {
-                self.databaseService.addTask(task,for: "TEST_USER").subscribe(onNext: { (_) in
+                self.databaseService.addTask(task,for: "TEST_ADD_USER").subscribe(onNext: { (_) in
+                    self.databaseService.deleteTask(task, for: "TEST_ADD_USER").subscribe().dispose()
                     promise.fulfill()
                 }).disposed(by: self.disposeBag)
             }
@@ -95,18 +90,23 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         var text = ""
         testScheduler.scheduleAt(0) {
             let mockData = TaskModel()
+            let editTaskUuid = mockData.uuid
+            var dataGeted = false
             self.databaseService.addTask(mockData, for: "TEST_EDIT_USER").subscribe(onNext: { (_) in
                 self.databaseService.editTask(mockData, editItems: [["text": "EDIT_TEST"]], for: "TEST_EDIT_USER").subscribe(onNext: { (_) in
                     self.databaseService.tasks(for: "TEST_EDIT_USER").subscribe(onNext: { (section) in
-                        for task in section[0].items {
-                            if task.uuid == mockData.uuid {
-                                text = task.text
-                                promise.fulfill()
-                            }
+                        guard !dataGeted else { return }
+                        if let editTask = section[0].items.first(where: { (task) -> Bool  in
+                            return task.uuid == editTaskUuid
+                        }) {
+                            text = editTask.text
+                            dataGeted = true
+                            self.databaseService.deleteTask(editTask, for: "TEST_EDIT_USER").subscribe().dispose()
+                            promise.fulfill()
                         }
-                    })
-                })
-            })
+                    }).disposed(by: self.disposeBag)
+                }).disposed(by: self.disposeBag)
+            }).disposed(by: self.disposeBag)
             
             
         }
@@ -116,11 +116,5 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         XCTAssert(text == "EDIT_TEST")
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
     
 }
