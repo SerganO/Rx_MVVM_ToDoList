@@ -29,7 +29,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
     
     func testAddDeleteTask() {
         
-        let promise = expectation(description: "Test parsing")
+        let promise = expectation(description: "add/delete")
         let n = 5
         let testUuid = "TEST_ADD_USER"
         promise.expectedFulfillmentCount = n
@@ -67,6 +67,103 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         
     }
     
+    func test_add_check_delete() {
+        let promise = expectation(description: "add")
+        let deletePromise = expectation(description: "delete")
+        let taskPromise = expectation(description: "tasks")
+        let taskAfterDeletePromise = expectation(description: "tasks")
+        let testUuid = "TEST_ADD_DELETE_USER"
+        let n = 5
+        
+        promise.expectedFulfillmentCount = n
+        deletePromise.expectedFulfillmentCount = n
+        
+        var tasksGet = false
+        var count = 0
+        var mockData = [TaskModel]()
+        
+        for i in 1...n {
+            let mockTask = TaskModel(
+                text: "task",
+                createDate: Date(),
+                notificationDate: nil,
+                completed: false,
+                orderID: i,
+                uuid: UUID())
+            mockData.append(mockTask)
+        }
+        
+        let addTaskScheduler = TestScheduler(initialClock: 0)
+        let deleteTaskScheduler = TestScheduler(initialClock: 0)
+        
+        addTaskScheduler.scheduleAt(0) {
+            for task in mockData {
+                self.databaseService.addTask(task, for: testUuid)
+                    .subscribe(onNext: { (result) in
+                        if result {
+                            promise.fulfill()
+                        }
+                    }).disposed(by: self.disposeBag)
+            }
+        }
+        addTaskScheduler.start()
+        wait(for: [promise], timeout: 5)
+        addTaskScheduler.stop()
+        
+        
+        
+        let result = testScheduler.createObserver([Section].self)
+        
+        let taskScheduler = TestScheduler(initialClock: 0)
+        taskScheduler.scheduleAt(5) {
+            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
+                count = sections[0].items.count
+                if !tasksGet {
+                    taskPromise.fulfill()
+                    tasksGet = true
+                }
+            }).subscribe(result).disposed(by: self.disposeBag)
+        }
+        
+        taskScheduler.start()
+        wait(for: [taskPromise], timeout: 5)
+        taskScheduler.stop()
+        print("count after add: \(count)")
+        XCTAssert(count == n)
+        
+        deleteTaskScheduler.scheduleAt(10) {
+            for task in mockData {
+                self.databaseService.deleteTask(task, for: testUuid)
+                    .subscribe(onNext: { (result) in
+                        if result {
+                            deletePromise.fulfill()
+                        }
+                    }).disposed(by: self.disposeBag)
+            }
+        }
+        deleteTaskScheduler.start()
+        wait(for: [deletePromise], timeout: 5)
+        deleteTaskScheduler.stop()
+        
+        let resultAfterDelete = testScheduler.createObserver([Section].self)
+        
+        let taskAfterDeleteScheduler = TestScheduler(initialClock: 0)
+        taskAfterDeleteScheduler.scheduleAt(15) {
+            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
+                count = sections[0].items.count
+                taskAfterDeletePromise.fulfill()
+            }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
+        }
+        
+        taskAfterDeleteScheduler.start()
+        wait(for: [taskAfterDeletePromise], timeout: 5)
+        taskAfterDeleteScheduler.stop()
+        print("count after delete: \(count)")
+        XCTAssert(count == 0)
+        
+        
+    }
+    
     func test_tasks() {
         var count = 0
         let n = 6
@@ -76,7 +173,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         let result = testScheduler.createObserver([Section].self)
         
         let taskScheduler = TestScheduler(initialClock: 0)
-        taskScheduler.scheduleAt(5) {
+        taskScheduler.scheduleAt(0) {
             self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
                 count = sections[0].items.count
                 taskPromise.fulfill()
@@ -90,7 +187,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
     }
     
     func test_editTask() {
-        let promise = expectation(description: "Test parsing")
+        let promise = expectation(description: "edit")
         let testUuid = "TEST_EDIT_USER"
         var text = ""
         testScheduler.scheduleAt(0) {
