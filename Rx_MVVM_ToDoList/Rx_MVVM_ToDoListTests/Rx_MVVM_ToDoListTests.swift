@@ -9,16 +9,20 @@
 import XCTest
 import RxSwift
 import RxTest
+import Foundation
+import UserNotifications
 @testable import Rx_MVVM_ToDoList
 
 class Rx_MVVM_ToDoListTests: XCTestCase {
     var databaseService: DatabaseService!
+    var notificationService: NotificationService!
     var testScheduler = TestScheduler(initialClock: 0)
     let disposeBag = DisposeBag()
     
     override func setUp() {
         super.setUp()
         databaseService = FirebaseDatabaseService()
+        notificationService = TDLNotificationService()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
@@ -57,12 +61,14 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
                         if result {
                             promise.fulfill()
                         }
+                    }, onError: { (_) in
+                        XCTFail()
                     }).disposed(by: self.disposeBag)
             }
             
         }
         testScheduler.start()
-        wait(for: [promise], timeout: 5)
+        wait(for: [promise], timeout: 10)
         testScheduler.stop()
         
     }
@@ -109,8 +115,6 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         addTaskScheduler.start()
         wait(for: [promise], timeout: 5)
         addTaskScheduler.stop()
-        
-        
         
         let result = testScheduler.createObserver([Section].self)
         
@@ -160,7 +164,6 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         taskAfterDeleteScheduler.stop()
         print("count after delete: \(count)")
         XCTAssert(count == 0)
-        
         
     }
     
@@ -214,6 +217,86 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         wait(for: [promise], timeout: 10)
         testScheduler.stop()
         XCTAssert(text == "EDIT_TEXT")
+    }
+    
+    
+    func test_notification() {
+        let center = UNUserNotificationCenter.current()
+        var countBefore = 0
+        var countAfter = 0
+        
+        let firstPromise = expectation(description: "first get")
+        let secondPromise = expectation(description: "second get")
+        
+        let firstScheduler = TestScheduler(initialClock: 0)
+        let secondScheduler = TestScheduler(initialClock: 0)
+        
+        notificationService.removeAllNotification()
+        
+        firstScheduler.scheduleAt(0) {
+            center.getPendingNotificationRequests { (notifications) in
+                countBefore = notifications.count
+                firstPromise.fulfill()
+            }
+        }
+        
+        firstScheduler.start()
+        wait(for: [firstPromise], timeout: 5)
+        firstScheduler.stop()
+        
+        XCTAssert(countBefore == 0)
+        
+        let date = Date() + 3600
+        
+        let noRememberTask = TaskModel(
+            text: "NO Remember",
+            createDate: Date(),
+            notificationDate: nil,
+            completed: false,
+            orderID: 0,
+            uuid: UUID())
+        
+        let rememberTask = TaskModel(
+            text: "Remember",
+            createDate: Date(),
+            notificationDate: date,
+            completed: false,
+            orderID: 1,
+            uuid: UUID())
+        
+        let deliveredTask = TaskModel(
+            text: "Remember",
+            createDate: Date(),
+            notificationDate: Date(),
+            completed: false,
+            orderID: 1,
+            uuid: UUID())
+        
+        let checkedTask = TaskModel(
+            text: "Remember",
+            createDate: Date(),
+            notificationDate: date,
+            completed: true,
+            orderID: 1,
+            uuid: UUID())
+        
+        let tasks = [noRememberTask, rememberTask, deliveredTask, checkedTask]
+        
+        notificationService.syncNotification(for: tasks)
+        
+        secondScheduler.scheduleAt(5) {
+            center.getPendingNotificationRequests { (notifications) in
+                countAfter = notifications.count
+                secondPromise.fulfill()
+            }
+        }
+        
+        secondScheduler.start()
+        wait(for: [secondPromise], timeout: 5)
+        secondScheduler.stop()
+        
+        XCTAssert(countAfter == countBefore + 1)
+        
     }
     
 }
