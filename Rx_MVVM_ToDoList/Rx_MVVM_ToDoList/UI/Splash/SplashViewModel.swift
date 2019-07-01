@@ -32,43 +32,7 @@ class SplashViewModel: ViewModel {
     func navigateToTasksWithUser(_ user: UserToken) {
         print("navigateToTasks")
         print(user.uuid)
-        //       let loginModel = LoginViewModel(services: services)
-        //       let loginController = LoginViewController(viewModel: loginModel)
-        //        let taskModel = TasksListViewModel(services: services, user: user)
-        //        let taskController = TasksListViewController(viewModel: taskModel)
-        //        let navigation = self.services.sceneCoordinator.currentViewController.navigationController
-        //
-        //        var controllers = navigation?.viewControllers
-        //        controllers?.append(loginController)
-        //        controllers?.append(taskController)
-        //        if controllers != nil {
-        //            navigation?.setViewControllers(controllers!, animated: true)
-        //        }
-        
-        //        let logModel = LoginViewModel(services: services)
-        //        let logScene = Scene.login(logModel)
-        //        services.sceneCoordinator.transition(to: logScene, type: .push, animated: true)
-        
-        
-        
-        
-//        let model = TasksListViewModel(services: services, user: user)
-//        let scene = Scene.tasksList(model)
-//        services.sceneCoordinator.transition(to: scene, type: .push, animated: true)
-        
-        //services.sceneCoordinator.transition(to: Scene.login(LoginViewModel(services: self.services)), type: .push, animated: true)
         services.sceneCoordinator.transition(to: Scene.tasksList(TasksListViewModel(services: self.services, user: user)), type: .push, animated: true)
-        
-        
-        //       let loginModel = LoginViewModel(services: services)
-        //       let loginController = LoginViewController(viewModel: loginModel)
-//        let loginModel = LoginViewModel(services: services)
-//        let loginController = LoginViewController(viewModel: loginModel)
-//        let navigation = self.services.sceneCoordinator.currentViewController.navigationController
-//        guard navigation != nil else { return }
-//        let stackCount = navigation!.viewControllers.count
-//        let addIndex = stackCount - 1
-//        navigation!.viewControllers.insert(loginController, at: addIndex)
     }
     
 }

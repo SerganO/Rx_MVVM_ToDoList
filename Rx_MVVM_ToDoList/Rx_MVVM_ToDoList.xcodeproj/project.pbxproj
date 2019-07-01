@@ -16,7 +16,6 @@
 		EC42E6F522C255C000EA086B /* Rx_MVVM_ToDoListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6F422C255C000EA086B /* Rx_MVVM_ToDoListTests.swift */; };
 		EC42E70022C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6FF22C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift */; };
 		EC42E70E22C25F0800EA086B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EC42E70D22C25F0800EA086B /* GoogleService-Info.plist */; };
-		EC42E71F22C2604A00EA086B /* userIDs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71B22C2604900EA086B /* userIDs.swift */; };
 		EC42E72022C2604A00EA086B /* TaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71C22C2604900EA086B /* TaskModel.swift */; };
 		EC42E72122C2604A00EA086B /* UserToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71D22C2604900EA086B /* UserToken.swift */; };
 		EC42E72422C2605B00EA086B /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E72322C2605A00EA086B /* Services.swift */; };
@@ -93,7 +92,6 @@
 		EC42E6FF22C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rx_MVVM_ToDoListUITests.swift; sourceTree = "<group>"; };
 		EC42E70122C255C000EA086B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC42E70D22C25F0800EA086B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		EC42E71B22C2604900EA086B /* userIDs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userIDs.swift; sourceTree = "<group>"; };
 		EC42E71C22C2604900EA086B /* TaskModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskModel.swift; sourceTree = "<group>"; };
 		EC42E71D22C2604900EA086B /* UserToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserToken.swift; sourceTree = "<group>"; };
 		EC42E72322C2605A00EA086B /* Services.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
@@ -308,7 +306,6 @@
 			children = (
 				EC42E71C22C2604900EA086B /* TaskModel.swift */,
 				EC42E71D22C2604900EA086B /* UserToken.swift */,
-				EC42E71B22C2604900EA086B /* userIDs.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -837,7 +834,6 @@
 				ECDA084722C495A5009E833D /* DatabaseService.swift in Sources */,
 				EC42E73622C2607D00EA086B /* GoogleAutheficationService.swift in Sources */,
 				EC42E73522C2607D00EA086B /* GoogleAutheficationServiceError.swift in Sources */,
-				EC42E71F22C2604A00EA086B /* userIDs.swift in Sources */,
 				EC42E74822C260A300EA086B /* ViewModel.swift in Sources */,
 				EC42E74422C2609C00EA086B /* SplashViewController.swift in Sources */,
 				ECDA085F22C4B657009E833D /* AddTaskViewController.swift in Sources */,

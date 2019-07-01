@@ -23,16 +23,7 @@ class Services {
         self.googleAutheficationService = GoogleAutheficationService()
         self.facebookAutheficationService = FacebookAutheficationService()
         self.userService = TDLUserService(googleAuthenficationService: googleAutheficationService, facebookAuthenficationService: facebookAutheficationService, databaseService: databaseService)
-        
-        
-        
         self.tasksService = TDLTasksService(database: databaseService)
         self.notificationService = TDLNotificationService()
-//        tasks = SimpleTasksService(database: database)
-//        date = SimpleDateService()
-//        notification = SimpleNotificationService()
-//        facebookAuth = FacebookAuthorizationService()
-//        googleAuth = GoogleAuthorizationService()
-//        user = SimpleUserService(database: database)
     }
 }

@@ -12,7 +12,6 @@ import RxTest
 @testable import Rx_MVVM_ToDoList
 
 class Rx_MVVM_ToDoListTests: XCTestCase {
-    let uuid = "20ACAE44-7220-4DFD-8F4D-028CA874E8D9"
     var databaseService: DatabaseService!
     var testScheduler = TestScheduler(initialClock: 0)
     let disposeBag = DisposeBag()
@@ -32,6 +31,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         
         let promise = expectation(description: "Test parsing")
         let n = 5
+        let testUuid = "TEST_ADD_USER"
         promise.expectedFulfillmentCount = n
         testScheduler.scheduleAt(0) {
             var mockData = [TaskModel]()
@@ -49,8 +49,8 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
             
             
             for task in mockData {
-                self.databaseService.addTask(task,for: "TEST_ADD_USER").subscribe(onNext: { (_) in
-                    self.databaseService.deleteTask(task, for: "TEST_ADD_USER").subscribe().dispose()
+                self.databaseService.addTask(task,for: testUuid ).subscribe(onNext: { (_) in
+                    self.databaseService.deleteTask(task, for: testUuid).subscribe().dispose()
                     promise.fulfill()
                 }).disposed(by: self.disposeBag)
             }
@@ -65,7 +65,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
     func test_tasks() {
         var count = 0
         let n = 6
-        
+        let testUuid = "TEST_USER"
         let taskPromise = expectation(description: "tasks")
         taskPromise.expectedFulfillmentCount = n
         
@@ -73,7 +73,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         
         let taskScheduler = TestScheduler(initialClock: 0)
         taskScheduler.scheduleAt(5) {
-            self.databaseService.tasks(for: "TEST_USER").do(onNext: { (sections) in
+            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
                 count = sections[0].items.count
                 taskPromise.fulfill()
             }).subscribe(result).disposed(by: self.disposeBag)
@@ -87,21 +87,22 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
     
     func test_editTask() {
         let promise = expectation(description: "Test parsing")
+        let testUuid = "TEST_EDIT_USER"
         var text = ""
         testScheduler.scheduleAt(0) {
             let mockData = TaskModel()
             let editTaskUuid = mockData.uuid
             var dataGeted = false
-            self.databaseService.addTask(mockData, for: "TEST_EDIT_USER").subscribe(onNext: { (_) in
-                self.databaseService.editTask(mockData, editItems: [["text": "EDIT_TEST"]], for: "TEST_EDIT_USER").subscribe(onNext: { (_) in
-                    self.databaseService.tasks(for: "TEST_EDIT_USER").subscribe(onNext: { (section) in
+            self.databaseService.addTask(mockData, for: testUuid ).subscribe(onNext: { (_) in
+                self.databaseService.editTask(mockData, editItems: [["text": "EDIT_TEST"]], for: testUuid).subscribe(onNext: { (_) in
+                    self.databaseService.tasks(for: testUuid).subscribe(onNext: { (section) in
                         guard !dataGeted else { return }
                         if let editTask = section[0].items.first(where: { (task) -> Bool  in
                             return task.uuid == editTaskUuid
                         }) {
                             text = editTask.text
                             dataGeted = true
-                            self.databaseService.deleteTask(editTask, for: "TEST_EDIT_USER").subscribe().dispose()
+                            self.databaseService.deleteTask(editTask, for: testUuid).subscribe().dispose()
                             promise.fulfill()
                         }
                     }).disposed(by: self.disposeBag)
