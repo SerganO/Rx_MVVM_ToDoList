@@ -100,6 +100,7 @@ class TasksListViewModel: ViewModel {
         let task = BehaviorRelay<TaskModel>.init(value: TaskModel())
         services.sceneCoordinator.transition(to: Scene.addTask(AddTaskViewModel(services: services,task: task, taskForEdit: taskForEdit)), type: .push, animated: true)
         task.bind { (task) in
+            guard task.text != "" else { return }
             
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
@@ -125,6 +126,7 @@ class TasksListViewModel: ViewModel {
                         ], for:  self.currentUser.uuid).subscribe(onNext: { (_) in
                         }).disposed(by: self.disposeBag)
                 }
+            self.updateId()
             }.disposed(by: disposeBag)
     }
     

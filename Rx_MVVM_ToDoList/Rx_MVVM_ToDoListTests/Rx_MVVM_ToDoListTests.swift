@@ -67,7 +67,6 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         let n = 6
         let testUuid = "TEST_USER"
         let taskPromise = expectation(description: "tasks")
-        taskPromise.expectedFulfillmentCount = n
         
         let result = testScheduler.createObserver([Section].self)
         
@@ -90,31 +89,29 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         let testUuid = "TEST_EDIT_USER"
         var text = ""
         testScheduler.scheduleAt(0) {
-            let mockData = TaskModel()
+            var mockData = TaskModel()
+            mockData.text = "NOT_EDIT_TEXT"
             let editTaskUuid = mockData.uuid
-            var dataGeted = false
-            self.databaseService.addTask(mockData, for: testUuid ).subscribe(onNext: { (_) in
-                self.databaseService.editTask(mockData, editItems: [["text": "EDIT_TEST"]], for: testUuid).subscribe(onNext: { (_) in
-                    self.databaseService.tasks(for: testUuid).subscribe(onNext: { (section) in
-                        guard !dataGeted else { return }
-                        if let editTask = section[0].items.first(where: { (task) -> Bool  in
-                            return task.uuid == editTaskUuid
-                        }) {
-                            text = editTask.text
-                            dataGeted = true
-                            self.databaseService.deleteTask(editTask, for: testUuid).subscribe().dispose()
-                            promise.fulfill()
-                        }
-                    }).disposed(by: self.disposeBag)
+            
+            self.databaseService.addTask(mockData, for: testUuid)
+                .flatMap({ (_) -> Observable<Bool> in
+                    self.databaseService.editTask(mockData, editItems: [["text": "EDIT_TEXT"]], for: testUuid)
+                }).flatMap({ (_) -> Observable<[Section]> in
+                    self.databaseService.tasks(for: testUuid)
+                }).subscribe(onNext: { (section) in
+                    if let editTask = section[0].items.first(where: { (task) -> Bool  in
+                        return task.uuid == editTaskUuid
+                    }) {
+                        text = editTask.text
+                        self.databaseService.deleteTask(editTask, for: testUuid).subscribe().dispose()
+                        promise.fulfill()
+                    }
                 }).disposed(by: self.disposeBag)
-            }).disposed(by: self.disposeBag)
-            
-            
         }
         testScheduler.start()
         wait(for: [promise], timeout: 10)
         testScheduler.stop()
-        XCTAssert(text == "EDIT_TEST")
+        XCTAssert(text == "EDIT_TEXT")
     }
     
     

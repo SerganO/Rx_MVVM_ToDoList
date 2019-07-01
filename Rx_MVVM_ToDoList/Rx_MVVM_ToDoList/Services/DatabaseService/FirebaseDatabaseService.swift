@@ -28,8 +28,8 @@ class FirebaseDatabaseService: DatabaseService {
                             newTasks[0].items.append(task)
                         }
                     }
-                    observer.onNext(newTasks)
                 }
+                observer.onNext(newTasks)
             }
             
             return Disposables.create()
