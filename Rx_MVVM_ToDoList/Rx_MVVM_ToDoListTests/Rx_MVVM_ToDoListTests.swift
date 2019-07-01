@@ -49,10 +49,15 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
             
             
             for task in mockData {
-                self.databaseService.addTask(task,for: testUuid ).subscribe(onNext: { (_) in
-                    self.databaseService.deleteTask(task, for: testUuid).subscribe().dispose()
-                    promise.fulfill()
-                }).disposed(by: self.disposeBag)
+                self.databaseService.addTask(task, for: testUuid)
+                    .flatMap({ (_) -> Observable<Bool> in
+                        self.databaseService.deleteTask(task, for: testUuid)
+                    })
+                    .subscribe(onNext: { (result) in
+                        if result {
+                            promise.fulfill()
+                        }
+                    }).disposed(by: self.disposeBag)
             }
             
         }
