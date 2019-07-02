@@ -52,6 +52,7 @@
 		ECDA085F22C4B657009E833D /* AddTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA085E22C4B657009E833D /* AddTaskViewController.swift */; };
 		ECDA086222C4B894009E833D /* DateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA086122C4B894009E833D /* DateViewModel.swift */; };
 		ECDA086422C4B8A3009E833D /* DateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA086322C4B8A3009E833D /* DateViewController.swift */; };
+		ECE060B522CB76FE00D2068D /* TasksServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE060B422CB76FE00D2068D /* TasksServiceTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +130,7 @@
 		ECDA085E22C4B657009E833D /* AddTaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskViewController.swift; sourceTree = "<group>"; };
 		ECDA086122C4B894009E833D /* DateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateViewModel.swift; sourceTree = "<group>"; };
 		ECDA086322C4B8A3009E833D /* DateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateViewController.swift; sourceTree = "<group>"; };
+		ECE060B422CB76FE00D2068D /* TasksServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksServiceTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +227,7 @@
 				EC42E6F422C255C000EA086B /* DatabaseServiceTest.swift */,
 				EC1A17A422CB3A1200F9B5AA /* NotificationServiceTest.swift */,
 				EC42E6F622C255C000EA086B /* Info.plist */,
+				ECE060B422CB76FE00D2068D /* TasksServiceTest.swift */,
 			);
 			path = Rx_MVVM_ToDoListTests;
 			sourceTree = "<group>";
@@ -847,6 +850,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECE060B522CB76FE00D2068D /* TasksServiceTest.swift in Sources */,
 				EC1A17A522CB3A1200F9B5AA /* NotificationServiceTest.swift in Sources */,
 				EC42E6F522C255C000EA086B /* DatabaseServiceTest.swift in Sources */,
 			);

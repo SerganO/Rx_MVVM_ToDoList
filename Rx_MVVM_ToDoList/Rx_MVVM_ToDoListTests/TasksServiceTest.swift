@@ -1,8 +1,8 @@
 //
-//  DatabaseServiceTest.swift
-//  DatabaseServiceTest
+//  TasksServiceTest.swift
+//  TasksServiceTest
 //
-//  Created by Trainee on 6/25/19.
+//  Created by Trainee on 7/2/19.
 //  Copyright © 2019 Trainee. All rights reserved.
 //
 
@@ -13,8 +13,9 @@ import Foundation
 import Firebase
 @testable import Rx_MVVM_ToDoList
 
-class DatabaseServiceTest: XCTestCase {
+class TasksServiceTest: XCTestCase {
     var databaseService: DatabaseService!
+    var tasksService: TasksService!
     var testScheduler = TestScheduler(initialClock: 0)
     let disposeBag = DisposeBag()
     let database = Database.database()
@@ -24,6 +25,7 @@ class DatabaseServiceTest: XCTestCase {
         super.setUp()
         databaseService = FirebaseDatabaseService()
         database.goOffline()
+        tasksService = TDLTasksService(database: databaseService)
     }
     
     override func tearDown() {
@@ -63,10 +65,16 @@ class DatabaseServiceTest: XCTestCase {
         
         addTaskScheduler.scheduleAt(0) {
             for task in mockData[0].items {
-                self.databaseService.addTask(task, for: testUuid)
+                self.tasksService.addTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
                             promise.fulfill()
+                        }
+                    }).disposed(by: self.disposeBag)
+                self.tasksService.addTask(task, for: testUuid)
+                    .subscribe(onNext: { (result) in
+                        if result {
+                            //promise.fulfill()
                         }
                     }).disposed(by: self.disposeBag)
             }
@@ -79,7 +87,7 @@ class DatabaseServiceTest: XCTestCase {
         
         let taskScheduler = TestScheduler(initialClock: 0)
         taskScheduler.scheduleAt(5) {
-            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
+            self.tasksService.tasks(for: testUuid).do(onNext: { (sections) in
                 if !tasksGet {
                     count = sections[0].items.count
                     section = sections
@@ -101,10 +109,10 @@ class DatabaseServiceTest: XCTestCase {
         XCTAssert(section![0].items == mockData[0].items)
         XCTAssert(section![1].items == mockData[1].items)
         section = nil
-
+        
         deleteTaskScheduler.scheduleAt(10) {
             for task in mockData[0].items {
-                self.databaseService.deleteTask(task, for: testUuid)
+                self.tasksService.deleteTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
                             deletePromise.fulfill()
@@ -120,7 +128,7 @@ class DatabaseServiceTest: XCTestCase {
         
         let taskAfterDeleteScheduler = TestScheduler(initialClock: 0)
         taskAfterDeleteScheduler.scheduleAt(15) {
-            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
+            self.tasksService.tasks(for: testUuid).do(onNext: { (sections) in
                 count = sections[0].items.count
                 section = sections
                 taskAfterDeletePromise.fulfill()
@@ -152,7 +160,7 @@ class DatabaseServiceTest: XCTestCase {
         
         let taskScheduler = TestScheduler(initialClock: 0)
         taskScheduler.scheduleAt(0) {
-            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
+            self.tasksService.tasks(for: testUuid).do(onNext: { (sections) in
                 count = sections[0].items.count
                 taskPromise.fulfill()
             }).subscribe(result).disposed(by: self.disposeBag)
@@ -174,17 +182,17 @@ class DatabaseServiceTest: XCTestCase {
             mockData.text = "NOT_EDIT_TEXT"
             let editTaskUuid = mockData.uuid
             
-            self.databaseService.addTask(mockData, for: testUuid)
+            self.tasksService.addTask(mockData, for: testUuid)
                 .flatMap({ (_) -> Observable<Bool> in
-                    self.databaseService.editTask(mockData, editItems: [["text": "EDIT_TEXT"]], for: testUuid)
+                    self.tasksService.editTask(mockData, editItems: [["text": "EDIT_TEXT"]], for: testUuid)
                 }).flatMap({ (_) -> Observable<[Section]> in
-                    self.databaseService.tasks(for: testUuid)
+                    self.tasksService.tasks(for: testUuid)
                 }).subscribe(onNext: { (section) in
                     if let editTask = section[0].items.first(where: { (task) -> Bool  in
                         return task.uuid == editTaskUuid
                     }) {
                         text = editTask.text
-                        self.databaseService.deleteTask(editTask, for: testUuid).subscribe().dispose()
+                        self.tasksService.deleteTask(editTask, for: testUuid).subscribe().dispose()
                         promise.fulfill()
                     }
                 }).disposed(by: self.disposeBag)

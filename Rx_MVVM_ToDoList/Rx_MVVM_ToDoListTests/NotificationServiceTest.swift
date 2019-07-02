@@ -1,6 +1,6 @@
 //
 //  NotificationServiceTest.swift
-//  DatabaseServiceTest
+//  NotificationServiceTest
 //
 //  Created by Trainee on 7/2/19.
 //  Copyright © 2019 Trainee. All rights reserved.
