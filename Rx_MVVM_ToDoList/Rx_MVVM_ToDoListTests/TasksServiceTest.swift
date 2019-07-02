@@ -37,7 +37,7 @@ class TasksServiceTest: XCTestCase {
         let deletePromise = expectation(description: "delete")
         let taskPromise = expectation(description: "tasks")
         let taskAfterDeletePromise = expectation(description: "tasks")
-        let testUuid = "TEST_ADD_DELETE_USER"
+        let testUuid = "TASK_TEST_ADD_DELETE_USER"
         let n = 5
         var section: [Section]?
         
@@ -69,12 +69,6 @@ class TasksServiceTest: XCTestCase {
                     .subscribe(onNext: { (result) in
                         if result {
                             promise.fulfill()
-                        }
-                    }).disposed(by: self.disposeBag)
-                self.tasksService.addTask(task, for: testUuid)
-                    .subscribe(onNext: { (result) in
-                        if result {
-                            //promise.fulfill()
                         }
                     }).disposed(by: self.disposeBag)
             }
@@ -175,7 +169,7 @@ class TasksServiceTest: XCTestCase {
     
     func test_editTask() {
         let promise = expectation(description: "edit")
-        let testUuid = "TEST_EDIT_USER"
+        let testUuid = "TASK_TEST_EDIT_USER"
         var text = ""
         testScheduler.scheduleAt(0) {
             var mockData = TaskModel()
