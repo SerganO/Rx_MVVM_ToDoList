@@ -18,6 +18,28 @@ struct TaskModel: Equatable {
     var orderID = -1
     var uuid = UUID()
     
+    static func == (lhs: TaskModel, rhs: TaskModel) -> Bool {
+        let equal =  lhs.text == rhs.text &&
+            fabs(lhs.createDate.timeIntervalSinceNow - rhs.createDate.timeIntervalSinceNow) < 1.0 &&
+            lhs.completed == rhs.completed &&
+            lhs.orderID == rhs.orderID &&
+            lhs.uuid == rhs.uuid
+        
+        if lhs.notificationDate == nil {
+            if rhs.notificationDate == nil {
+                return equal
+            } else {
+                return false
+            }
+        } else {
+            if rhs.notificationDate == nil {
+                return false
+            } else {
+                return equal && fabs(lhs.notificationDate!.timeIntervalSinceNow - rhs.notificationDate!.timeIntervalSinceNow) < 1.0
+            }
+        }
+    }
+    
     static func modelFromDictionary(_ dictionary: [String: Any]) -> TaskModel? {
         guard
             let text = dictionary["text"] as? String,

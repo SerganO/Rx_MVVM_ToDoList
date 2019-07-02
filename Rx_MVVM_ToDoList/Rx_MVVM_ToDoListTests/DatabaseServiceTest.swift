@@ -1,6 +1,6 @@
 //
-//  Rx_MVVM_ToDoListTests.swift
-//  Rx_MVVM_ToDoListTests
+//  DatabaseServiceTest.swift
+//  DatabaseServiceTest
 //
 //  Created by Trainee on 6/25/19.
 //  Copyright © 2019 Trainee. All rights reserved.
@@ -10,67 +10,24 @@ import XCTest
 import RxSwift
 import RxTest
 import Foundation
-import UserNotifications
+import Firebase
 @testable import Rx_MVVM_ToDoList
 
-class Rx_MVVM_ToDoListTests: XCTestCase {
+class DatabaseServiceTest: XCTestCase {
     var databaseService: DatabaseService!
-    var notificationService: NotificationService!
     var testScheduler = TestScheduler(initialClock: 0)
     let disposeBag = DisposeBag()
+    let database = Database.database()
+    
     
     override func setUp() {
         super.setUp()
         databaseService = FirebaseDatabaseService()
-        notificationService = TDLNotificationService()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        database.goOffline()
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
-    
-    func testAddDeleteTask() {
-        
-        let promise = expectation(description: "add/delete")
-        let n = 5
-        let testUuid = "TEST_ADD_USER"
-        promise.expectedFulfillmentCount = n
-        testScheduler.scheduleAt(0) {
-            var mockData = [TaskModel]()
-            
-            for i in 1...n {
-                let mockTask = TaskModel(
-                    text: "task",
-                    createDate: Date(),
-                    notificationDate: nil,
-                    completed: false,
-                    orderID: i,
-                    uuid: UUID())
-                mockData.append(mockTask)
-            }
-            
-            
-            for task in mockData {
-                self.databaseService.addTask(task, for: testUuid)
-                    .flatMap({ (_) -> Observable<Bool> in
-                        self.databaseService.deleteTask(task, for: testUuid)
-                    })
-                    .subscribe(onNext: { (result) in
-                        if result {
-                            promise.fulfill()
-                        }
-                    }, onError: { (_) in
-                        XCTFail()
-                    }).disposed(by: self.disposeBag)
-            }
-            
-        }
-        testScheduler.start()
-        wait(for: [promise], timeout: 10)
-        testScheduler.stop()
-        
+        database.purgeOutstandingWrites()
     }
     
     func test_add_check_delete() {
@@ -80,13 +37,15 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         let taskAfterDeletePromise = expectation(description: "tasks")
         let testUuid = "TEST_ADD_DELETE_USER"
         let n = 5
+        var section: [Section]?
         
         promise.expectedFulfillmentCount = n
         deletePromise.expectedFulfillmentCount = n
         
         var tasksGet = false
         var count = 0
-        var mockData = [TaskModel]()
+        var emptyData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
+        var mockData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
         
         for i in 1...n {
             let mockTask = TaskModel(
@@ -96,18 +55,24 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
                 completed: false,
                 orderID: i,
                 uuid: UUID())
-            mockData.append(mockTask)
+            mockData[0].items.append(mockTask)
         }
         
         let addTaskScheduler = TestScheduler(initialClock: 0)
         let deleteTaskScheduler = TestScheduler(initialClock: 0)
         
         addTaskScheduler.scheduleAt(0) {
-            for task in mockData {
+            for task in mockData[0].items {
                 self.databaseService.addTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
                             promise.fulfill()
+                        }
+                    }).disposed(by: self.disposeBag)
+                self.databaseService.addTask(task, for: testUuid)
+                    .subscribe(onNext: { (result) in
+                        if result {
+                            //promise.fulfill()
                         }
                     }).disposed(by: self.disposeBag)
             }
@@ -121,8 +86,9 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         let taskScheduler = TestScheduler(initialClock: 0)
         taskScheduler.scheduleAt(5) {
             self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
-                count = sections[0].items.count
                 if !tasksGet {
+                    count = sections[0].items.count
+                    section = sections
                     taskPromise.fulfill()
                     tasksGet = true
                 }
@@ -134,9 +100,16 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         taskScheduler.stop()
         print("count after add: \(count)")
         XCTAssert(count == n)
-        
+        guard section != nil else {
+            XCTFail()
+            return
+        }
+        XCTAssert(section![0].items == mockData[0].items)
+        XCTAssert(section![1].items == mockData[1].items)
+        section = nil
+
         deleteTaskScheduler.scheduleAt(10) {
-            for task in mockData {
+            for task in mockData[0].items {
                 self.databaseService.deleteTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
@@ -155,6 +128,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         taskAfterDeleteScheduler.scheduleAt(15) {
             self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
                 count = sections[0].items.count
+                section = sections
                 taskAfterDeletePromise.fulfill()
             }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
         }
@@ -165,6 +139,13 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         print("count after delete: \(count)")
         XCTAssert(count == 0)
         
+        guard section != nil else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(section![0].items == emptyData[0].items)
+        XCTAssert(section![1].items == emptyData[1].items)
     }
     
     func test_tasks() {
@@ -186,6 +167,7 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
         taskScheduler.start()
         wait(for: [taskPromise], timeout: 5)
         taskScheduler.stop()
+        XCTAssert(result.events.first?.value.element?.isEmpty == false)
         XCTAssert(count == n)
     }
     
@@ -214,89 +196,9 @@ class Rx_MVVM_ToDoListTests: XCTestCase {
                 }).disposed(by: self.disposeBag)
         }
         testScheduler.start()
-        wait(for: [promise], timeout: 10)
+        wait(for: [promise], timeout: 5)
         testScheduler.stop()
         XCTAssert(text == "EDIT_TEXT")
-    }
-    
-    
-    func test_notification() {
-        let center = UNUserNotificationCenter.current()
-        var countBefore = 0
-        var countAfter = 0
-        
-        let firstPromise = expectation(description: "first get")
-        let secondPromise = expectation(description: "second get")
-        
-        let firstScheduler = TestScheduler(initialClock: 0)
-        let secondScheduler = TestScheduler(initialClock: 0)
-        
-        notificationService.removeAllNotification()
-        
-        firstScheduler.scheduleAt(0) {
-            center.getPendingNotificationRequests { (notifications) in
-                countBefore = notifications.count
-                firstPromise.fulfill()
-            }
-        }
-        
-        firstScheduler.start()
-        wait(for: [firstPromise], timeout: 5)
-        firstScheduler.stop()
-        
-        XCTAssert(countBefore == 0)
-        
-        let date = Date() + 3600
-        
-        let noRememberTask = TaskModel(
-            text: "NO Remember",
-            createDate: Date(),
-            notificationDate: nil,
-            completed: false,
-            orderID: 0,
-            uuid: UUID())
-        
-        let rememberTask = TaskModel(
-            text: "Remember",
-            createDate: Date(),
-            notificationDate: date,
-            completed: false,
-            orderID: 1,
-            uuid: UUID())
-        
-        let deliveredTask = TaskModel(
-            text: "Remember",
-            createDate: Date(),
-            notificationDate: Date(),
-            completed: false,
-            orderID: 1,
-            uuid: UUID())
-        
-        let checkedTask = TaskModel(
-            text: "Remember",
-            createDate: Date(),
-            notificationDate: date,
-            completed: true,
-            orderID: 1,
-            uuid: UUID())
-        
-        let tasks = [noRememberTask, rememberTask, deliveredTask, checkedTask]
-        
-        notificationService.syncNotification(for: tasks)
-        
-        secondScheduler.scheduleAt(5) {
-            center.getPendingNotificationRequests { (notifications) in
-                countAfter = notifications.count
-                secondPromise.fulfill()
-            }
-        }
-        
-        secondScheduler.start()
-        wait(for: [secondPromise], timeout: 5)
-        secondScheduler.stop()
-        
-        XCTAssert(countAfter == countBefore + 1)
-        
     }
     
 }

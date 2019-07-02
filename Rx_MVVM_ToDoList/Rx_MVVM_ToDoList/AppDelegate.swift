@@ -23,6 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         
+        Database.database().isPersistenceEnabled = true
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         let sceneCoordinator = SceneCoordinator(window: window!)
         let services = Services(sceneCoordinator: sceneCoordinator)

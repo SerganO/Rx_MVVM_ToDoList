@@ -10,10 +10,11 @@
 		14A6EC06C1F160418B029CA6 /* Pods_Rx_MVVM_ToDoListUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C6F410CAD98F69015ABBA /* Pods_Rx_MVVM_ToDoListUITests.framework */; };
 		393B9A18FD536BF5765E9C96 /* Pods_Rx_MVVM_ToDoList.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3A22B1D5BAB4C63BC4CF96A /* Pods_Rx_MVVM_ToDoList.framework */; };
 		DA8AF42639416644E6EA6548 /* Pods_Rx_MVVM_ToDoListTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95A435B4DB051DFAEAB2589D /* Pods_Rx_MVVM_ToDoListTests.framework */; };
+		EC1A17A522CB3A1200F9B5AA /* NotificationServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1A17A422CB3A1200F9B5AA /* NotificationServiceTest.swift */; };
 		EC42E6E022C255BF00EA086B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6DF22C255BF00EA086B /* AppDelegate.swift */; };
 		EC42E6E722C255C000EA086B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC42E6E622C255C000EA086B /* Assets.xcassets */; };
 		EC42E6EA22C255C000EA086B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC42E6E822C255C000EA086B /* LaunchScreen.storyboard */; };
-		EC42E6F522C255C000EA086B /* Rx_MVVM_ToDoListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6F422C255C000EA086B /* Rx_MVVM_ToDoListTests.swift */; };
+		EC42E6F522C255C000EA086B /* DatabaseServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6F422C255C000EA086B /* DatabaseServiceTest.swift */; };
 		EC42E70022C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6FF22C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift */; };
 		EC42E70E22C25F0800EA086B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EC42E70D22C25F0800EA086B /* GoogleService-Info.plist */; };
 		EC42E72022C2604A00EA086B /* TaskModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E71C22C2604900EA086B /* TaskModel.swift */; };
@@ -80,13 +81,14 @@
 		C3A22B1D5BAB4C63BC4CF96A /* Pods_Rx_MVVM_ToDoList.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rx_MVVM_ToDoList.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1702903B9812F9A48E368A2 /* Pods-Rx_MVVM_ToDoListTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rx_MVVM_ToDoListTests.release.xcconfig"; path = "Target Support Files/Pods-Rx_MVVM_ToDoListTests/Pods-Rx_MVVM_ToDoListTests.release.xcconfig"; sourceTree = "<group>"; };
 		DC12E94D8F297631A3A7B428 /* Pods-Rx_MVVM_ToDoList.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rx_MVVM_ToDoList.release.xcconfig"; path = "Target Support Files/Pods-Rx_MVVM_ToDoList/Pods-Rx_MVVM_ToDoList.release.xcconfig"; sourceTree = "<group>"; };
+		EC1A17A422CB3A1200F9B5AA /* NotificationServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceTest.swift; sourceTree = "<group>"; };
 		EC42E6DC22C255BF00EA086B /* Rx_MVVM_ToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rx_MVVM_ToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC42E6DF22C255BF00EA086B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EC42E6E622C255C000EA086B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EC42E6E922C255C000EA086B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC42E6EB22C255C000EA086B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC42E6F022C255C000EA086B /* Rx_MVVM_ToDoListTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Rx_MVVM_ToDoListTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC42E6F422C255C000EA086B /* Rx_MVVM_ToDoListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rx_MVVM_ToDoListTests.swift; sourceTree = "<group>"; };
+		EC42E6F422C255C000EA086B /* DatabaseServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseServiceTest.swift; sourceTree = "<group>"; };
 		EC42E6F622C255C000EA086B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC42E6FB22C255C000EA086B /* Rx_MVVM_ToDoListUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Rx_MVVM_ToDoListUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC42E6FF22C255C000EA086B /* Rx_MVVM_ToDoListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rx_MVVM_ToDoListUITests.swift; sourceTree = "<group>"; };
@@ -220,7 +222,8 @@
 		EC42E6F322C255C000EA086B /* Rx_MVVM_ToDoListTests */ = {
 			isa = PBXGroup;
 			children = (
-				EC42E6F422C255C000EA086B /* Rx_MVVM_ToDoListTests.swift */,
+				EC42E6F422C255C000EA086B /* DatabaseServiceTest.swift */,
+				EC1A17A422CB3A1200F9B5AA /* NotificationServiceTest.swift */,
 				EC42E6F622C255C000EA086B /* Info.plist */,
 			);
 			path = Rx_MVVM_ToDoListTests;
@@ -844,7 +847,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC42E6F522C255C000EA086B /* Rx_MVVM_ToDoListTests.swift in Sources */,
+				EC1A17A522CB3A1200F9B5AA /* NotificationServiceTest.swift in Sources */,
+				EC42E6F522C255C000EA086B /* DatabaseServiceTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

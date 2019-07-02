@@ -46,13 +46,15 @@ class FirebaseDatabaseService: DatabaseService {
             que.async {
                 let UserRef = self.MainRef.child("users").child(userID)
                 let taskRef = UserRef.child("tasks").child(task.uuid.uuidString)
-                taskRef.setValue(task.toDic(), withCompletionBlock: { (error, _) in
-                    if error == nil {
-                        observer.onNext(true)
-                    } else {
-                        observer.onError(error!)
-                    }
-                })
+//                taskRef.setValue(task.toDic(), withCompletionBlock: { (error, _) in
+//                    if error == nil {
+//                        observer.onNext(true)
+//                    } else {
+//                        observer.onError(error!)
+//                    }
+//                })
+                taskRef.setValue(task.toDic())
+                observer.onNext(true)
             }
             
             return Disposables.create()
@@ -66,13 +68,15 @@ class FirebaseDatabaseService: DatabaseService {
             que.async {
                 for editItem in editItems {
                     let UserRef = self.MainRef.child("users").child(userID)
-                    UserRef.child("tasks").child(task.uuid.uuidString).updateChildValues(editItem, withCompletionBlock: { (error, _) in
-                        if error == nil {
-                            observer.onNext(true)
-                        } else {
-                            observer.onError(error!)
-                        }
-                    })
+//                    UserRef.child("tasks").child(task.uuid.uuidString).updateChildValues(editItem, withCompletionBlock: { (error, _) in
+//                        if error == nil {
+//                            observer.onNext(true)
+//                        } else {
+//                            observer.onError(error!)
+//                        }
+//                    })
+                    UserRef.child("tasks").child(task.uuid.uuidString).updateChildValues(editItem)
+                    observer.onNext(true)
                 }
             }
             
@@ -86,14 +90,15 @@ class FirebaseDatabaseService: DatabaseService {
             let que = DispatchQueue.global()
             que.async {
                 let UserRef = self.MainRef.child("users").child(userID)
-                UserRef.child("tasks").child(task.uuid.uuidString).removeValue(completionBlock: { (error, _) in
-                    if error == nil {
-                        observer.onNext(true)
-                    } else {
-                        observer.onError(error!)
-                    }
-                })
-                
+//                UserRef.child("tasks").child(task.uuid.uuidString).removeValue(completionBlock: { (error, _) in
+//                    if error == nil {
+//                        observer.onNext(true)
+//                    } else {
+//                        observer.onError(error!)
+//                    }
+//                })
+                UserRef.child("tasks").child(task.uuid.uuidString).removeValue()
+                observer.onNext(true)
             }
             
             return Disposables.create()
