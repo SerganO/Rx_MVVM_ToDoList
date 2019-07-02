@@ -53,6 +53,7 @@
 		ECDA086222C4B894009E833D /* DateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA086122C4B894009E833D /* DateViewModel.swift */; };
 		ECDA086422C4B8A3009E833D /* DateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA086322C4B8A3009E833D /* DateViewController.swift */; };
 		ECE060B522CB76FE00D2068D /* TasksServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE060B422CB76FE00D2068D /* TasksServiceTest.swift */; };
+		ECE060B722CB861800D2068D /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE060B622CB861800D2068D /* Reachability.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,6 +132,7 @@
 		ECDA086122C4B894009E833D /* DateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateViewModel.swift; sourceTree = "<group>"; };
 		ECDA086322C4B8A3009E833D /* DateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateViewController.swift; sourceTree = "<group>"; };
 		ECE060B422CB76FE00D2068D /* TasksServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksServiceTest.swift; sourceTree = "<group>"; };
+		ECE060B622CB861800D2068D /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,6 +272,7 @@
 			children = (
 				EC42E74222C2609C00EA086B /* SplashViewController.swift */,
 				EC42E74122C2609C00EA086B /* SplashViewModel.swift */,
+				ECE060B622CB861800D2068D /* Reachability.swift */,
 			);
 			path = Splash;
 			sourceTree = "<group>";
@@ -817,6 +820,7 @@
 				EC7F9D8122C3888C00EB74F4 /* TasksListViewModel.swift in Sources */,
 				ECDA084D22C49801009E833D /* IDType.swift in Sources */,
 				EC7F9D8322C3889E00EB74F4 /* TasksListViewController.swift in Sources */,
+				ECE060B722CB861800D2068D /* Reachability.swift in Sources */,
 				EC42E73122C2607400EA086B /* SceneCoordinator.swift in Sources */,
 				EC7F9D8622C389EF00EB74F4 /* TaskCell.swift in Sources */,
 				EC42E73222C2607400EA086B /* Scene.swift in Sources */,

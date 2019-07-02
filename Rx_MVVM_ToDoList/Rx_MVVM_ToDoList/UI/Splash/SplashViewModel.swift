@@ -14,13 +14,14 @@ class SplashViewModel: ViewModel {
     let disposeBag = DisposeBag()
     
     func processAutorization() {
-        if services.userService.isExistsCredentials() {
+        if services.userService.isExistsCredentials() && Reachability.isConnectedToNetwork() {
             services.userService.actualUserToken(true).subscribe(onNext: { (user) in
                 self.navigateToTasksWithUser(user)
             }).disposed(by: disposeBag)
         } else {
             navigateToLogin()
         }
+        
     }
     
     func navigateToLogin() {
