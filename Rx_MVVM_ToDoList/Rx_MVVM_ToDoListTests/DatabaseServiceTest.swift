@@ -195,4 +195,93 @@ class DatabaseServiceTest: XCTestCase {
         XCTAssert(text == "EDIT_TEXT")
     }
     
+    
+    func test_getUserID() {
+        var userUUID = ""
+        
+        let promise = expectation(description: "tasks")
+        
+        
+        let uuidScheduler = TestScheduler(initialClock: 0)
+        uuidScheduler.scheduleAt(0) {
+            self.databaseService.getUserUUID(userID: "237562803869957", type: .facebook).subscribe(onNext: { (uuid) in
+                userUUID = uuid
+                promise.fulfill()
+            }).disposed(by: self.disposeBag)
+        }
+        
+        uuidScheduler.start()
+        wait(for: [promise], timeout: 5)
+        uuidScheduler.stop()
+        
+        
+        XCTAssert(userUUID == "4120D5E7-6EFF-4486-9C45-457408F8A0B5")
+    }
+    
+    func test_syncUser() {
+        var userUUID = ""
+        let newUuid = UUID()
+        
+        let promise = expectation(description: "tasks")
+        
+        
+        let uuidScheduler = TestScheduler(initialClock: 0)
+        uuidScheduler.scheduleAt(0) {
+            self.databaseService.syncUserID(newUserID: "TEST_USER", newType: .google, with: newUuid.uuidString).subscribe(onNext: { (result) in
+                if result {
+                    promise.fulfill()
+                } else {
+                    XCTFail()
+                }
+                
+            }).disposed(by: self.disposeBag)
+        }
+        
+        uuidScheduler.start()
+        wait(for: [promise], timeout: 5)
+        uuidScheduler.stop()
+        let getPromise = expectation(description: "tasks")
+        
+        
+        let getUuidScheduler = TestScheduler(initialClock: 0)
+        getUuidScheduler.scheduleAt(0) {
+            self.databaseService.getUserUUID(userID: "TEST_USER", type: .google).subscribe(onNext: { (uuid) in
+                userUUID = uuid
+                getPromise.fulfill()
+            }).disposed(by: self.disposeBag)
+        }
+        
+        getUuidScheduler.start()
+        wait(for: [getPromise], timeout: 5)
+        getUuidScheduler.stop()
+        
+        XCTAssert(userUUID == newUuid.uuidString)
+    }
+    
+    func test_getSync() {
+        var sync: Bool?
+        
+        let promise = expectation(description: "tasks")
+        
+        
+        let syncScheduler = TestScheduler(initialClock: 0)
+        syncScheduler.scheduleAt(0) {
+            self.databaseService.getSync(for: "4120D5E7-6EFF-4486-9C45-457408F8A0B5").subscribe(onNext: { (isSync) in
+                sync = isSync
+                promise.fulfill()
+            }).disposed(by: self.disposeBag)
+        }
+        
+        syncScheduler.start()
+        wait(for: [promise], timeout: 5)
+        syncScheduler.stop()
+        
+        guard sync != nil else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(sync!)
+    }
+    
 }
