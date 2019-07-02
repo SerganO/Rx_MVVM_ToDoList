@@ -228,8 +228,8 @@
 			children = (
 				EC42E6F422C255C000EA086B /* DatabaseServiceTest.swift */,
 				EC1A17A422CB3A1200F9B5AA /* NotificationServiceTest.swift */,
-				EC42E6F622C255C000EA086B /* Info.plist */,
 				ECE060B422CB76FE00D2068D /* TasksServiceTest.swift */,
+				EC42E6F622C255C000EA086B /* Info.plist */,
 			);
 			path = Rx_MVVM_ToDoListTests;
 			sourceTree = "<group>";
