@@ -22,7 +22,7 @@ class DatabaseServiceTest: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+        database.reference().observeSingleEvent(of: .value) { (_) in }
         databaseService = FirebaseDatabaseService()
         database.reference().keepSynced(true)
         database.goOffline()
