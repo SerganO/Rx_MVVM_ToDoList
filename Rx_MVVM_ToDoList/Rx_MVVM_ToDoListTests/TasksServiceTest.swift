@@ -52,6 +52,8 @@ class TasksServiceTest: XCTestCase {
         var emptyData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
         var mockData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
         
+        database.reference().child("users").child(testUuid).removeValue()
+        
         for i in 1...n {
             let mockTask = TaskModel(
                 text: "task",
