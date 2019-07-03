@@ -22,7 +22,8 @@ class DatabaseServiceTest: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database.reference().observeSingleEvent(of: .value) { (_) in }
+        
+        database.reference().observeSingleEvent(of: .value) {  (_) in  }
         databaseService = FirebaseDatabaseService()
         database.reference().keepSynced(true)
         database.goOffline()
@@ -33,8 +34,8 @@ class DatabaseServiceTest: XCTestCase {
     }
     
     func test_add_check_delete() {
-        let promise = expectation(description: "add")
-        let deletePromise = expectation(description: "delete")
+        let promise = expectation(description: "addTask")
+        let deletePromise = expectation(description: "deleteTask")
         let taskPromise = expectation(description: "tasks affter add")
         let taskAfterDeletePromise = expectation(description: "tasks after delete")
         let testUuid = "TEST_ADD_DELETE_USER"
