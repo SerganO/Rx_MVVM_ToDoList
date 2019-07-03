@@ -39,7 +39,7 @@ class TasksListViewController: ViewController<TasksListViewModel>, UITableViewDe
         }
         
         let add = UIButton()
-        add.setTitle("ADD", for: .normal)
+        add.setImage(UIImage(named: "Add"), for: .normal)
         add.setTitleColor(.black, for: .normal)
         add.setTitleColor(.gray, for: .highlighted)
         add.rx.tap.bind {

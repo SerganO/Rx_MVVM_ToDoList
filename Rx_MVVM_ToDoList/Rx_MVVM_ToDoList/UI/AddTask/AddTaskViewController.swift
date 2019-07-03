@@ -36,7 +36,7 @@ class AddTaskViewController: ViewController<AddTaskViewModel> {
         formatter.dateStyle = .none
         formatter.timeStyle = .long
         formatter.dateFormat = "EEEEEEEE"
-        formatter.dateFormat = "MMM d hh:mm"
+        formatter.dateFormat = "MMM d HH:mm"
         
         viewModel.notificationDate.accept(dueDate)
         
@@ -89,9 +89,6 @@ class AddTaskViewController: ViewController<AddTaskViewModel> {
             self.dueDate = date
             self.updateDueDateLabel()
         }.disposed(by: viewModel.disposeBag)
-        
-        
-        
         
         remindContainer.backgroundColor = .white
         view.addSubview(remindContainer)
@@ -174,7 +171,6 @@ class AddTaskViewController: ViewController<AddTaskViewModel> {
                 editItem.notificationDate = nil
             }
             viewModel.acceptTask(editItem)
-            //viewModel.services.user.completionHandler?(true)
             viewModel.services.sceneCoordinator.pop()
         } else {
             var task = viewModel.createTask(textView.text)
