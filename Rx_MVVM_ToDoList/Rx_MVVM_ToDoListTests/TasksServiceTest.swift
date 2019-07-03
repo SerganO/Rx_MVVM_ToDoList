@@ -23,7 +23,10 @@ class TasksServiceTest: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        database.reference().observeSingleEvent(of: .value) { (_) in }
+        
         databaseService = FirebaseDatabaseService()
+        database.reference().keepSynced(true)
         database.goOffline()
         tasksService = TDLTasksService(database: databaseService)
     }
@@ -119,13 +122,17 @@ class TasksServiceTest: XCTestCase {
         deleteTaskScheduler.stop()
         
         let resultAfterDelete = testScheduler.createObserver([Section].self)
-        
+        var taskAfterDeleteGet = false
         let taskAfterDeleteScheduler = TestScheduler(initialClock: 0)
         taskAfterDeleteScheduler.scheduleAt(15) {
             self.tasksService.tasks(for: testUuid).do(onNext: { (sections) in
-                count = sections[0].items.count
-                section = sections
-                taskAfterDeletePromise.fulfill()
+                if !taskAfterDeleteGet {
+                    count = sections[0].items.count
+                    section = sections
+                    taskAfterDeletePromise.fulfill()
+                    taskAfterDeleteGet = true
+                }
+                
             }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
         }
         

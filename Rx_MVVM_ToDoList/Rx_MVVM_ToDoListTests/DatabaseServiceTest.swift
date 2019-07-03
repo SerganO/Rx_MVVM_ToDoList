@@ -22,7 +22,9 @@ class DatabaseServiceTest: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        
         databaseService = FirebaseDatabaseService()
+        database.reference().keepSynced(true)
         database.goOffline()
     }
     
@@ -33,8 +35,8 @@ class DatabaseServiceTest: XCTestCase {
     func test_add_check_delete() {
         let promise = expectation(description: "add")
         let deletePromise = expectation(description: "delete")
-        let taskPromise = expectation(description: "tasks")
-        let taskAfterDeletePromise = expectation(description: "tasks")
+        let taskPromise = expectation(description: "tasks affter add")
+        let taskAfterDeletePromise = expectation(description: "tasks after delete")
         let testUuid = "TEST_ADD_DELETE_USER"
         let n = 5
         var section: [Section]?
@@ -46,6 +48,8 @@ class DatabaseServiceTest: XCTestCase {
         var count = 0
         var emptyData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
         var mockData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
+        
+        database.reference().child("users").child(testUuid).removeValue()
         
         for i in 1...n {
             let mockTask = TaskModel(
@@ -117,13 +121,17 @@ class DatabaseServiceTest: XCTestCase {
         deleteTaskScheduler.stop()
         
         let resultAfterDelete = testScheduler.createObserver([Section].self)
-        
+        var taskAfterDeleteGet = false
         let taskAfterDeleteScheduler = TestScheduler(initialClock: 0)
         taskAfterDeleteScheduler.scheduleAt(15) {
             self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
-                count = sections[0].items.count
-                section = sections
-                taskAfterDeletePromise.fulfill()
+                if !taskAfterDeleteGet {
+                    count = sections[0].items.count
+                    section = sections
+                    taskAfterDeletePromise.fulfill()
+                    taskAfterDeleteGet = true
+                }
+                
             }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
         }
         
