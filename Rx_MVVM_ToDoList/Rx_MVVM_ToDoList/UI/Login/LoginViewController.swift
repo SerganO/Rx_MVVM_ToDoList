@@ -49,16 +49,23 @@ class LoginViewController: ViewController<LoginViewModel> {
     func configureFacebookButton() {
         let loginButton = LoginButton(readPermissions: [ .publicProfile, .email ])
         loginButton.loginBehavior = .web
-        loginButton.center = view.center
-        loginButton.center.y += 50
         view.addSubview(loginButton)
+        loginButton.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(50)
+        }
         loginButton.delegate = viewModel.services.userService.getFacebookButtonDelegate()
     }
     
     func configureGoogleSignInButton() {
         let googleSignInButton = GIDSignInButton()
-        googleSignInButton.frame = CGRect(x: view.frame.width/2-100, y: view.frame.height/2-25, width: 200, height: 50)
         view.addSubview(googleSignInButton)
+        
+        googleSignInButton.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.width.equalTo(200)
+            make.height.equalTo(50)
+        }
     }
     
 }
