@@ -49,8 +49,8 @@ class TasksServiceTest: XCTestCase {
         
         var tasksGet = false
         var count = 0
-        var emptyData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
-        var mockData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
+        var emptyData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
+        var mockData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
         
         database.reference().child("users").child(testUuid).removeValue()
         

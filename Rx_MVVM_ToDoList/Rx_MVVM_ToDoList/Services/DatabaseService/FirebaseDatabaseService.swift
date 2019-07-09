@@ -30,7 +30,7 @@ class FirebaseDatabaseService: DatabaseService {
             let UserRef = self.mainRef.child("users").child(userID)
             
             UserRef.child("tasks").queryOrdered(byChild: "orderID").observe(.value) { (snapshot) in
-                var newTasks = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
+                var newTasks = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
                 for child in snapshot.children {
                     if let snapshot = child as? DataSnapshot,
                         let task = TaskModel.modelFromDictionary(snapshot.value as? [String:Any] ?? [:]) {

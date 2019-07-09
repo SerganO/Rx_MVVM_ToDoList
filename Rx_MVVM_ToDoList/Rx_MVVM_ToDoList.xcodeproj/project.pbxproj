@@ -3,12 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		14A6EC06C1F160418B029CA6 /* Pods_Rx_MVVM_ToDoListUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C6F410CAD98F69015ABBA /* Pods_Rx_MVVM_ToDoListUITests.framework */; };
 		393B9A18FD536BF5765E9C96 /* Pods_Rx_MVVM_ToDoList.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3A22B1D5BAB4C63BC4CF96A /* Pods_Rx_MVVM_ToDoList.framework */; };
+		D393803D22D4DC4A007C93B0 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = D393803C22D4DC4A007C93B0 /* Section.swift */; };
 		DA8AF42639416644E6EA6548 /* Pods_Rx_MVVM_ToDoListTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95A435B4DB051DFAEAB2589D /* Pods_Rx_MVVM_ToDoListTests.framework */; };
 		EC1A17A522CB3A1200F9B5AA /* NotificationServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1A17A422CB3A1200F9B5AA /* NotificationServiceTest.swift */; };
 		EC42E6E022C255BF00EA086B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC42E6DF22C255BF00EA086B /* AppDelegate.swift */; };
@@ -82,6 +83,7 @@
 		B39C6F410CAD98F69015ABBA /* Pods_Rx_MVVM_ToDoListUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rx_MVVM_ToDoListUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3A22B1D5BAB4C63BC4CF96A /* Pods_Rx_MVVM_ToDoList.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rx_MVVM_ToDoList.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1702903B9812F9A48E368A2 /* Pods-Rx_MVVM_ToDoListTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rx_MVVM_ToDoListTests.release.xcconfig"; path = "Target Support Files/Pods-Rx_MVVM_ToDoListTests/Pods-Rx_MVVM_ToDoListTests.release.xcconfig"; sourceTree = "<group>"; };
+		D393803C22D4DC4A007C93B0 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		DC12E94D8F297631A3A7B428 /* Pods-Rx_MVVM_ToDoList.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rx_MVVM_ToDoList.release.xcconfig"; path = "Target Support Files/Pods-Rx_MVVM_ToDoList/Pods-Rx_MVVM_ToDoList.release.xcconfig"; sourceTree = "<group>"; };
 		EC1A17A422CB3A1200F9B5AA /* NotificationServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceTest.swift; sourceTree = "<group>"; };
 		EC42E6DC22C255BF00EA086B /* Rx_MVVM_ToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rx_MVVM_ToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -315,6 +317,7 @@
 			children = (
 				EC42E71C22C2604900EA086B /* TaskModel.swift */,
 				EC42E71D22C2604900EA086B /* UserToken.swift */,
+				D393803C22D4DC4A007C93B0 /* Section.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -746,6 +749,7 @@
 				EC42E72C22C2606C00EA086B /* SceneType.swift in Sources */,
 				EC42E72D22C2606C00EA086B /* SceneCoordinatorType.swift in Sources */,
 				EC42E73F22C2609600EA086B /* NavigationController.swift in Sources */,
+				D393803D22D4DC4A007C93B0 /* Section.swift in Sources */,
 				ECDA086422C4B8A3009E833D /* DateViewController.swift in Sources */,
 				ECDA086222C4B894009E833D /* DateViewModel.swift in Sources */,
 				EC42E6E022C255BF00EA086B /* AppDelegate.swift in Sources */,

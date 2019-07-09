@@ -39,8 +39,8 @@ class DatabaseServiceTest: XCTestCase {
         promise.expectedFulfillmentCount = n
         deletePromise.expectedFulfillmentCount = n
         
-        var emptyData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
-        var mockData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
+        var emptyData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
+        var mockData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
         
         //database.reference().child("users").child(testUuid).removeValue()
         
@@ -77,20 +77,8 @@ class DatabaseServiceTest: XCTestCase {
             }).subscribe(result).disposed(by: self.disposeBag)
         }
         
-        guard let fetchElemets = result.events.first?.value.element else {
-            XCTFail()
-            return
-        }
-        
-        let expected: [Recorded<Event<[Section]>>] = [
-            Recorded.next(5, mockData),
-            Recorded.completed(5)
-        ]
-        
-        XCTAssertEqual(expected, result.events)
-
         scheduler.scheduleAt(10) {
-            for task in fetchElemets[0].items {
+            for task in mockData[0].items {
                 self.databaseService.deleteTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
@@ -111,7 +99,13 @@ class DatabaseServiceTest: XCTestCase {
         wait(for: [promise, taskPromise, deletePromise, taskAfterDeletePromise], timeout: 5)
         scheduler.stop()
         
+        let expected: [Recorded<Event<[Section]>>] = [
+            Recorded.next(0, mockData),
+            Recorded.completed(0)
+        ]
         
+        XCTAssertEqual(expected, result.events)
+ 
     }
     
 //    func test_tasks() {

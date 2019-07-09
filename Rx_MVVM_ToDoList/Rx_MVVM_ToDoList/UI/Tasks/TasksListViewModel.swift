@@ -11,21 +11,27 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-typealias Section = SectionModel<String, TaskModel>
+//typealias Section = SectionModel<String, TaskModel>
 
 class TasksListViewModel: ViewModel {
     
     let disposeBag = DisposeBag()
-    let sections: BehaviorRelay<[Section]>
+    let sections: BehaviorRelay<[SectionModel<String, TaskModel>]>
     var currentUser: UserToken
     
     init(services: Services, user: UserToken) {
         
         
         currentUser = user
-        sections = BehaviorRelay<[Section]>(value: [])
+        sections = BehaviorRelay<[SectionModel<String, TaskModel>]>(value: [])
         super.init(services: services)
-        services.tasksService.tasks(for: user.uuid).bind(to: sections).disposed(by: disposeBag)
+        services.tasksService.tasks(for: user.uuid).map({ (section) -> [SectionModel<String, TaskModel>] in
+            
+            
+            let tasks = [SectionModel<String,TaskModel>.init(model: section[0].title, items: section[0].items), SectionModel<String,TaskModel>.init(model: section[1].title, items: section[1].items)]
+            
+            return tasks
+        }).bind(to: sections).disposed(by: disposeBag)
         services.tasksService.tasks(for: user.uuid).subscribe({ (tasks) in
             if let tasks = tasks.element {
                 services.notificationService.syncNotification(for: tasks[0].items)
