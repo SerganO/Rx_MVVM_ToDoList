@@ -12,33 +12,11 @@ import Firebase
 struct TaskModel: Equatable {
     
     var text = ""
-    var createDate = Date()
+    var createDate = Date.nowWithoutMilisecondes()
     var notificationDate: Date?
     var completed = false
     var orderID = -1
     var uuid = UUID()
-    
-    static func == (lhs: TaskModel, rhs: TaskModel) -> Bool {
-        let equal =  lhs.text == rhs.text &&
-            fabs(lhs.createDate.timeIntervalSinceNow - rhs.createDate.timeIntervalSinceNow) < 1.0 &&
-            lhs.completed == rhs.completed &&
-            lhs.orderID == rhs.orderID &&
-            lhs.uuid == rhs.uuid
-        
-        if lhs.notificationDate == nil {
-            if rhs.notificationDate == nil {
-                return equal
-            } else {
-                return false
-            }
-        } else {
-            if rhs.notificationDate == nil {
-                return false
-            } else {
-                return equal && fabs(lhs.notificationDate!.timeIntervalSinceNow - rhs.notificationDate!.timeIntervalSinceNow) < 1.0
-            }
-        }
-    }
     
     static func modelFromDictionary(_ dictionary: [String: Any]) -> TaskModel? {
         guard
@@ -58,7 +36,7 @@ struct TaskModel: Equatable {
         model.text = text
         model.completed = completed
         model.notificationDate = formatter.date(from: notificationDate)
-        model.createDate = formatter.date(from: createDate) ?? Date()
+        model.createDate = formatter.date(from: createDate) ?? Date.nowWithoutMilisecondes()
         model.uuid = uuid
         model.orderID = orderID
         return model
@@ -83,4 +61,18 @@ struct TaskModel: Equatable {
         ]
     }
     
+}
+
+extension Date {
+    static func nowWithoutMilisecondes() -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy HH-mm-ss"
+        return formatter.date(from: formatter.string(from: Date()))!
+    }
+    
+    static func dateWithoutMilisecondes(_ date: Date) -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy HH-mm-ss"
+        return formatter.date(from: formatter.string(from: date))!
+    }
 }

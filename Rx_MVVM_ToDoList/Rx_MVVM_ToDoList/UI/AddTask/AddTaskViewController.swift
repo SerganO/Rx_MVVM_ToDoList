@@ -166,7 +166,7 @@ class AddTaskViewController: ViewController<AddTaskViewModel> {
             editItem.orderID = -1
             editItem.text = textView.text
             if shouldRemindSwitch.isOn {
-                editItem.notificationDate = dueDate
+                editItem.notificationDate = Date.dateWithoutMilisecondes(dueDate)
             } else {
                 editItem.notificationDate = nil
             }
@@ -175,7 +175,7 @@ class AddTaskViewController: ViewController<AddTaskViewModel> {
         } else {
             var task = viewModel.createTask(textView.text)
             if shouldRemindSwitch.isOn {
-                task.notificationDate = dueDate
+                task.notificationDate = Date.dateWithoutMilisecondes(dueDate)
             }
             task.orderID = -1
             viewModel.acceptTask(task)

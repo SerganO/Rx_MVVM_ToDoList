@@ -58,7 +58,7 @@ class TasksListViewModel: ViewModel {
         value[sect].items.insert(task, at: 0)
         sections.accept(value)
         task.completed = !task.completed
-        task.createDate = Date()
+        task.createDate = Date.nowWithoutMilisecondes()
         services.notificationService.addNotificationIfNeeded(for: task)
         TasksListViewModel.configureTaskCell(task, cell: cell)
         let formatter = DateFormatter()

@@ -51,11 +51,11 @@ class NotificationServiceTest: XCTestCase {
         
         XCTAssert(countBefore == 0)
         
-        let date = Date() + 3600
+        let date = Date.nowWithoutMilisecondes() + 3600
         
         let noRememberTask = TaskModel(
             text: "NO Remember",
-            createDate: Date(),
+            createDate: Date.nowWithoutMilisecondes(),
             notificationDate: nil,
             completed: false,
             orderID: 0,
@@ -63,7 +63,7 @@ class NotificationServiceTest: XCTestCase {
         
         let rememberTask = TaskModel(
             text: "Remember",
-            createDate: Date(),
+            createDate: Date.nowWithoutMilisecondes(),
             notificationDate: date,
             completed: false,
             orderID: 1,
@@ -98,11 +98,11 @@ class NotificationServiceTest: XCTestCase {
         let firstScheduler = TestScheduler(initialClock: 0)
         let secondScheduler = TestScheduler(initialClock: 0)
         
-        let date = Date() + 3600
+        let date = Date.nowWithoutMilisecondes() + 3600
         
         let rememberTask = TaskModel(
             text: "Remember",
-            createDate: Date(),
+            createDate: Date.nowWithoutMilisecondes(),
             notificationDate: date,
             completed: false,
             orderID: 1,
@@ -149,14 +149,14 @@ class NotificationServiceTest: XCTestCase {
         let firstScheduler = TestScheduler(initialClock: 0)
         let secondScheduler = TestScheduler(initialClock: 0)
         
-        let date = Date() + 3600
+        let date = Date.nowWithoutMilisecondes() + 3600
         
         var tasks = [TaskModel]()
         
         for i in  1...n {
             let rememberTask = TaskModel(
                 text: "Remember",
-                createDate: Date(),
+                createDate: Date.nowWithoutMilisecondes(),
                 notificationDate: date,
                 completed: false,
                 orderID: i,
@@ -219,11 +219,11 @@ class NotificationServiceTest: XCTestCase {
         
         XCTAssert(countBefore == 0)
         
-        let date = Date() + 3600
+        let date = Date.nowWithoutMilisecondes() + 3600
         
         let noRememberTask = TaskModel(
             text: "NO Remember",
-            createDate: Date(),
+            createDate: Date.nowWithoutMilisecondes(),
             notificationDate: nil,
             completed: false,
             orderID: 0,
@@ -231,7 +231,7 @@ class NotificationServiceTest: XCTestCase {
         
         let rememberTask = TaskModel(
             text: "Remember",
-            createDate: Date(),
+            createDate: Date.nowWithoutMilisecondes(),
             notificationDate: date,
             completed: false,
             orderID: 1,
@@ -239,8 +239,8 @@ class NotificationServiceTest: XCTestCase {
         
         let deliveredTask = TaskModel(
             text: "Remember",
-            createDate: Date(),
-            notificationDate: Date(),
+            createDate: Date.nowWithoutMilisecondes(),
+            notificationDate: Date.nowWithoutMilisecondes(),
             completed: false,
             orderID: 1,
             uuid: UUID())

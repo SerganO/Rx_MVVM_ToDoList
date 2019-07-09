@@ -57,7 +57,7 @@ class TasksServiceTest: XCTestCase {
         for i in 1...n {
             let mockTask = TaskModel(
                 text: "task",
-                createDate: Date(),
+                createDate: Date.nowWithoutMilisecondes(),
                 notificationDate: nil,
                 completed: false,
                 orderID: i,

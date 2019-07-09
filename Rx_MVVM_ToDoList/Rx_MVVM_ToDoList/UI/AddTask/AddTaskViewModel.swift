@@ -16,7 +16,7 @@ class AddTaskViewModel: ViewModel {
     var taskForEdit: TaskModel?
     var task: BehaviorRelay<TaskModel>
     let disposeBag = DisposeBag()
-    var notificationDate = BehaviorRelay<Date>(value: Date())
+    var notificationDate = BehaviorRelay<Date>(value: Date.nowWithoutMilisecondes())
     
     
     func createTask(_ text: String) -> TaskModel {

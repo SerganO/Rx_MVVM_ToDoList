@@ -14,23 +14,18 @@ import Firebase
 @testable import Rx_MVVM_ToDoList
 
 class DatabaseServiceTest: XCTestCase {
-    var databaseService: DatabaseService!
+    var databaseService: FirebaseDatabaseService!
     var testScheduler = TestScheduler(initialClock: 0)
     let disposeBag = DisposeBag()
-    let database = Database.database()
     
     
     override func setUp() {
         super.setUp()
-        
-        database.reference().observeSingleEvent(of: .value) {  (_) in  }
-        databaseService = FirebaseDatabaseService()
-        database.reference().keepSynced(true)
-        database.goOffline()
+        databaseService = FirebaseDatabaseService(launchInTestMode: true)
     }
     
     override func tearDown() {
-        database.purgeOutstandingWrites()
+        databaseService.mainDB.purgeOutstandingWrites()
     }
     
     func test_add_check_delete() {
@@ -40,22 +35,20 @@ class DatabaseServiceTest: XCTestCase {
         let taskAfterDeletePromise = expectation(description: "tasks after delete")
         let testUuid = "TEST_ADD_DELETE_USER"
         let n = 5
-        var section: [Section]?
         
         promise.expectedFulfillmentCount = n
         deletePromise.expectedFulfillmentCount = n
         
-        var tasksGet = false
-        var count = 0
         var emptyData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
         var mockData = [Section(model: "Uncompleted", items: []), Section(model: "Completed", items: [])]
         
-        database.reference().child("users").child(testUuid).removeValue()
+        //database.reference().child("users").child(testUuid).removeValue()
         
+     
         for i in 1...n {
             let mockTask = TaskModel(
                 text: "task",
-                createDate: Date(),
+                createDate: Date.nowWithoutMilisecondes(),
                 notificationDate: nil,
                 completed: false,
                 orderID: i,
@@ -63,10 +56,9 @@ class DatabaseServiceTest: XCTestCase {
             mockData[0].items.append(mockTask)
         }
         
-        let addTaskScheduler = TestScheduler(initialClock: 0)
-        let deleteTaskScheduler = TestScheduler(initialClock: 0)
+        let scheduler = TestScheduler(initialClock: 0)
         
-        addTaskScheduler.scheduleAt(0) {
+        scheduler.scheduleAt(0) {
             for task in mockData[0].items {
                 self.databaseService.addTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
@@ -76,39 +68,29 @@ class DatabaseServiceTest: XCTestCase {
                     }).disposed(by: self.disposeBag)
             }
         }
-        addTaskScheduler.start()
-        wait(for: [promise], timeout: 5)
-        addTaskScheduler.stop()
         
         let result = testScheduler.createObserver([Section].self)
         
-        let taskScheduler = TestScheduler(initialClock: 0)
-        taskScheduler.scheduleAt(5) {
-            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
-                if !tasksGet {
-                    count = sections[0].items.count
-                    section = sections
-                    taskPromise.fulfill()
-                    tasksGet = true
-                }
+        scheduler.scheduleAt(5) {
+            self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (_) in
+                taskPromise.fulfill()
             }).subscribe(result).disposed(by: self.disposeBag)
         }
         
-        taskScheduler.start()
-        wait(for: [taskPromise], timeout: 5)
-        taskScheduler.stop()
-        print("count after add: \(count)")
-        XCTAssert(count == n)
-        guard section != nil else {
+        guard let fetchElemets = result.events.first?.value.element else {
             XCTFail()
             return
         }
-        XCTAssert(section![0].items == mockData[0].items)
-        XCTAssert(section![1].items == mockData[1].items)
-        section = nil
+        
+        let expected: [Recorded<Event<[Section]>>] = [
+            Recorded.next(5, mockData),
+            Recorded.completed(5)
+        ]
+        
+        XCTAssertEqual(expected, result.events)
 
-        deleteTaskScheduler.scheduleAt(10) {
-            for task in mockData[0].items {
+        scheduler.scheduleAt(10) {
+            for task in fetchElemets[0].items {
                 self.databaseService.deleteTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
@@ -117,66 +99,47 @@ class DatabaseServiceTest: XCTestCase {
                     }).disposed(by: self.disposeBag)
             }
         }
-        deleteTaskScheduler.start()
-        wait(for: [deletePromise], timeout: 5)
-        deleteTaskScheduler.stop()
         
         let resultAfterDelete = testScheduler.createObserver([Section].self)
-        var taskAfterDeleteGet = false
-        let taskAfterDeleteScheduler = TestScheduler(initialClock: 0)
-        taskAfterDeleteScheduler.scheduleAt(15) {
-            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
-                if !taskAfterDeleteGet {
-                    count = sections[0].items.count
-                    section = sections
-                    taskAfterDeletePromise.fulfill()
-                    taskAfterDeleteGet = true
-                }
-                
+        scheduler.scheduleAt(15) {
+            self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (sections) in
+                taskAfterDeletePromise.fulfill()
             }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
         }
+
+        scheduler.start()
+        wait(for: [promise, taskPromise, deletePromise, taskAfterDeletePromise], timeout: 5)
+        scheduler.stop()
         
-        taskAfterDeleteScheduler.start()
-        wait(for: [taskAfterDeletePromise], timeout: 5)
-        taskAfterDeleteScheduler.stop()
-        print("count after delete: \(count)")
-        XCTAssert(count == 0)
         
-        guard section != nil else {
-            XCTFail()
-            return
-        }
-        
-        XCTAssert(section![0].items == emptyData[0].items)
-        XCTAssert(section![1].items == emptyData[1].items)
     }
     
-    func test_tasks() {
-        var count = 0
-        let n = 6
-        let testUuid = "TEST_USER"
-        let taskPromise = expectation(description: "tasks")
-        
-        let result = testScheduler.createObserver([Section].self)
-        
-        let taskScheduler = TestScheduler(initialClock: 0)
-        taskScheduler.scheduleAt(0) {
-            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
-                count = sections[0].items.count
-                taskPromise.fulfill()
-            }).subscribe(result).disposed(by: self.disposeBag)
-        }
-        
-        taskScheduler.start()
-        wait(for: [taskPromise], timeout: 5)
-        taskScheduler.stop()
-        XCTAssert(result.events.first?.value.element?.isEmpty == false)
-        XCTAssert(count == n)
-    }
+//    func test_tasks() {
+//        var count = 0
+//        let n = 6
+//        let testUuid = "TEST_USER"
+//        let taskPromise = expectation(description: "tasks")
+//
+//        let result = testScheduler.createObserver([Section].self)
+//
+//        let taskScheduler = TestScheduler(initialClock: 0)
+//        taskScheduler.scheduleAt(0) {
+//            self.databaseService.tasks(for: testUuid).do(onNext: { (sections) in
+//                count = sections[0].items.count
+//                taskPromise.fulfill()
+//            }).subscribe(result).disposed(by: self.disposeBag)
+//        }
+//
+//        taskScheduler.start()
+//        wait(for: [taskPromise], timeout: 5)
+//        taskScheduler.stop()
+//        XCTAssert(result.events.first?.value.element?.isEmpty == false)
+//        XCTAssert(count == n)
+//    }
     
     func test_editTask() {
         let promise = expectation(description: "edit")
-        let testUuid = "TEST_EDIT_USER"
+        let testUuid = "TEST_EDIT_USER_"
         var text = ""
         testScheduler.scheduleAt(0) {
             var mockData = TaskModel()
@@ -206,25 +169,39 @@ class DatabaseServiceTest: XCTestCase {
     
     
     func test_getUserID() {
-        var userUUID = ""
-        
-        let promise = expectation(description: "tasks")
+        var userUUID_1 = ""
+        var userUUID_2 = ""
+        let userID = "TEST_USER_ID"
+        let promise_1 = expectation(description: "tasks_1")
+        let promise_2 = expectation(description: "tasks_2")
         
         
         let uuidScheduler = TestScheduler(initialClock: 0)
         uuidScheduler.scheduleAt(0) {
-            self.databaseService.getUserUUID(userID: "237562803869957", type: .facebook).subscribe(onNext: { (uuid) in
-                userUUID = uuid
-                promise.fulfill()
+            self.databaseService.getUserUUID(userID: userID, type: .facebook).subscribe(onNext: { (uuid) in
+                userUUID_1 = uuid
+                promise_1.fulfill()
             }).disposed(by: self.disposeBag)
         }
         
         uuidScheduler.start()
-        wait(for: [promise], timeout: 5)
+        wait(for: [promise_1], timeout: 5)
         uuidScheduler.stop()
         
+        let uuidScheduler2 = TestScheduler(initialClock: 0)
+        uuidScheduler2.scheduleAt(5) {
+            self.databaseService.getUserUUID(userID: userID, type: .facebook).subscribe(onNext: { (uuid) in
+                userUUID_2 = uuid
+                promise_2.fulfill()
+            }).disposed(by: self.disposeBag)
+        }
         
-        XCTAssert(userUUID == "4120D5E7-6EFF-4486-9C45-457408F8A0B5")
+        uuidScheduler2.start()
+        wait(for: [promise_2], timeout: 5)
+        uuidScheduler2.stop()
+        
+        
+        XCTAssert(userUUID_1 == userUUID_2)
     }
     
     func test_syncUser() {
@@ -268,22 +245,78 @@ class DatabaseServiceTest: XCTestCase {
     }
     
     func test_getSync() {
-        var sync: Bool?
+        var userUUID = ""
+        let newUuid = UUID()
         
+        let syncPromise1 = expectation(description: "sync")
+        let syncPromise = expectation(description: "sync")
         let promise = expectation(description: "tasks")
-        
+        var sync:Bool?
         
         let syncScheduler = TestScheduler(initialClock: 0)
         syncScheduler.scheduleAt(0) {
-            self.databaseService.getSync(for: "4120D5E7-6EFF-4486-9C45-457408F8A0B5").subscribe(onNext: { (isSync) in
+            self.databaseService.getSync(for: newUuid.uuidString).subscribe(onNext: { (isSync) in
                 sync = isSync
-                promise.fulfill()
+                syncPromise1.fulfill()
             }).disposed(by: self.disposeBag)
         }
         
         syncScheduler.start()
-        wait(for: [promise], timeout: 5)
+        wait(for: [syncPromise1], timeout: 5)
         syncScheduler.stop()
+        
+        guard sync != nil else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssert(!sync!)
+        sync = nil
+        
+        let uuidScheduler = TestScheduler(initialClock: 0)
+        uuidScheduler.scheduleAt(0) {
+            self.databaseService.syncUserID(newUserID: "TEST_USER", newType: .google, with: newUuid.uuidString).subscribe(onNext: { (result) in
+                if result {
+                    promise.fulfill()
+                } else {
+                    XCTFail()
+                }
+                
+            }).disposed(by: self.disposeBag)
+        }
+        
+        uuidScheduler.start()
+        wait(for: [promise], timeout: 5)
+        uuidScheduler.stop()
+        let getPromise = expectation(description: "tasks")
+        
+        
+        let getUuidScheduler = TestScheduler(initialClock: 0)
+        getUuidScheduler.scheduleAt(0) {
+            self.databaseService.getUserUUID(userID: "TEST_USER", type: .google).subscribe(onNext: { (uuid) in
+                userUUID = uuid
+                getPromise.fulfill()
+            }).disposed(by: self.disposeBag)
+        }
+        
+        getUuidScheduler.start()
+        wait(for: [getPromise], timeout: 5)
+        getUuidScheduler.stop()
+        
+        XCTAssert(userUUID == newUuid.uuidString)
+        
+        
+        let syncScheduler2 = TestScheduler(initialClock: 0)
+        syncScheduler2.scheduleAt(0) {
+            self.databaseService.getSync(for: newUuid.uuidString).subscribe(onNext: { (isSync) in
+                sync = isSync
+                syncPromise.fulfill()
+            }).disposed(by: self.disposeBag)
+        }
+        
+        syncScheduler2.start()
+        wait(for: [syncPromise], timeout: 5)
+        syncScheduler2.stop()
         
         guard sync != nil else {
             XCTFail()
@@ -293,4 +326,13 @@ class DatabaseServiceTest: XCTestCase {
         XCTAssert(sync!)
     }
     
+    
+}
+
+extension Date {
+    static func nowWithoutMilisecondes() -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy HH-mm-ss"
+        return formatter.date(from: formatter.string(from: Date()))!
+    }
 }
