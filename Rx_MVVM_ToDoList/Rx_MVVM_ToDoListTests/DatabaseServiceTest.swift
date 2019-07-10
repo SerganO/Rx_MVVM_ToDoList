@@ -34,12 +34,13 @@ class DatabaseServiceTest: XCTestCase {
         let taskPromise = expectation(description: "tasks affter add")
         let taskAfterDeletePromise = expectation(description: "tasks after delete")
         let testUuid = "TEST_ADD_DELETE_USER"
+        databaseService.mainRef.child("users").child(testUuid).removeValue()
         let n = 5
         
         promise.expectedFulfillmentCount = n
         deletePromise.expectedFulfillmentCount = n
         
-        var emptyData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
+        let emptyData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
         var mockData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
         
         //database.reference().child("users").child(testUuid).removeValue()
@@ -64,6 +65,7 @@ class DatabaseServiceTest: XCTestCase {
                     .subscribe(onNext: { (result) in
                         if result {
                             promise.fulfill()
+                            print("---- ADD ---- \(Date().timeIntervalSinceReferenceDate)")
                         }
                     }).disposed(by: self.disposeBag)
             }
@@ -72,8 +74,11 @@ class DatabaseServiceTest: XCTestCase {
         let result = testScheduler.createObserver([Section].self)
         
         scheduler.scheduleAt(5) {
-            self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (_) in
+            self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (tasks) in
                 taskPromise.fulfill()
+                print("---- TASKS ADD ---- \(Date().timeIntervalSinceReferenceDate)")
+                print(tasks)
+                
             }).subscribe(result).disposed(by: self.disposeBag)
         }
         
@@ -83,6 +88,7 @@ class DatabaseServiceTest: XCTestCase {
                     .subscribe(onNext: { (result) in
                         if result {
                             deletePromise.fulfill()
+                            print("---- DELETE ---- \(Date().timeIntervalSinceReferenceDate)")
                         }
                     }).disposed(by: self.disposeBag)
             }
@@ -91,6 +97,8 @@ class DatabaseServiceTest: XCTestCase {
         let resultAfterDelete = testScheduler.createObserver([Section].self)
         scheduler.scheduleAt(15) {
             self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (sections) in
+                print("---- TASKS DELETE ---- \(Date().timeIntervalSinceReferenceDate)")
+                print(sections)
                 taskAfterDeletePromise.fulfill()
             }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
         }
@@ -104,7 +112,13 @@ class DatabaseServiceTest: XCTestCase {
             Recorded.completed(0)
         ]
         
+        let expectedAfterDelete: [Recorded<Event<[Section]>>] = [
+            Recorded.next(0, emptyData),
+            Recorded.completed(0)
+        ]
+       
         XCTAssertEqual(expected, result.events)
+        //XCTAssertEqual(expectedAfterDelete, resultAfterDelete.events)
  
     }
     
