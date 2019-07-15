@@ -21,6 +21,8 @@ class FirebaseDatabaseService: DatabaseService {
         mainDB = Database.database()
         if launchInTestMode {
             mainDB.goOffline()
+            mainRef.keepSynced(true)
+            mainRef.observeSingleEvent(of: .value) { (_) in }
         }
     }
     

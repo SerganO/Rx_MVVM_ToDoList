@@ -73,7 +73,7 @@ class DatabaseServiceTest: XCTestCase {
         
         let result = testScheduler.createObserver([Section].self)
         
-        scheduler.scheduleAt(5) {
+        scheduler.scheduleAt(100) {
             self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (tasks) in
                 taskPromise.fulfill()
                 print("---- TASKS ADD ---- \(Date().timeIntervalSinceReferenceDate)")
@@ -82,7 +82,7 @@ class DatabaseServiceTest: XCTestCase {
             }).subscribe(result).disposed(by: self.disposeBag)
         }
         
-        scheduler.scheduleAt(10) {
+        scheduler.scheduleAt(200) {
             for task in mockData[0].items {
                 self.databaseService.deleteTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
@@ -95,7 +95,7 @@ class DatabaseServiceTest: XCTestCase {
         }
         
         let resultAfterDelete = testScheduler.createObserver([Section].self)
-        scheduler.scheduleAt(15) {
+        scheduler.scheduleAt(300) {
             self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (sections) in
                 print("---- TASKS DELETE ---- \(Date().timeIntervalSinceReferenceDate)")
                 print(sections)
@@ -117,9 +117,125 @@ class DatabaseServiceTest: XCTestCase {
             Recorded.completed(0)
         ]
        
-        XCTAssertEqual(expected, result.events)
-        //XCTAssertEqual(expectedAfterDelete, resultAfterDelete.events)
+//        XCTAssertEqual(expected, result.events)
+//        XCTAssertEqual(expectedAfterDelete, resultAfterDelete.events)
  
+    }
+    
+    func test_add_check_delete_() {
+        
+        let promise = expectation(description: "addTask")
+        let deletePromise = expectation(description: "deleteTask")
+        let taskPromise = expectation(description: "tasks affter add")
+        let taskAfterDeletePromise = expectation(description: "tasks after delete")
+        
+        let addScheduler = TestScheduler(initialClock: 0)
+        let getAfterAddScheduler = TestScheduler(initialClock: 0)
+        let deleteScheduler = TestScheduler(initialClock: 0)
+        let getAfterDeleteScheduler = TestScheduler(initialClock: 0)
+        
+        let testUuid = "TEST_ADD_DELETE_USER"
+        databaseService.mainRef.child("users").child(testUuid).removeValue()
+        let n = 5
+        
+        promise.expectedFulfillmentCount = n
+        deletePromise.expectedFulfillmentCount = n
+        
+        let emptyData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
+        var mockData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
+        
+        //database.reference().child("users").child(testUuid).removeValue()
+        
+        
+        for i in 1...n {
+            let mockTask = TaskModel(
+                text: "task",
+                createDate: Date.nowWithoutMilisecondes(),
+                notificationDate: nil,
+                completed: false,
+                orderID: i,
+                uuid: UUID())
+            mockData[0].items.append(mockTask)
+        }
+        
+        
+        
+        addScheduler.scheduleAt(0) {
+            for task in mockData[0].items {
+                self.databaseService.addTask(task, for: testUuid)
+                    .subscribe(onNext: { (result) in
+                        if result {
+                            promise.fulfill()
+                            print("---- ADD ---- \(Date().timeIntervalSinceReferenceDate)")
+                        }
+                    }).disposed(by: self.disposeBag)
+            }
+        }
+        
+        
+        
+        addScheduler.start()
+        wait(for: [promise], timeout: 5)
+        addScheduler.stop()
+        
+        let result = testScheduler.createObserver([Section].self)
+        getAfterAddScheduler.scheduleAt(100) {
+            self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (tasks) in
+                taskPromise.fulfill()
+                print("---- TASKS ADD ---- \(Date().timeIntervalSinceReferenceDate)")
+                print(tasks)
+                
+            }).subscribe(result).disposed(by: self.disposeBag)
+        }
+        
+        getAfterAddScheduler.start()
+        wait(for: [taskPromise], timeout: 5)
+        getAfterAddScheduler.stop()
+        
+        let expected: [Recorded<Event<[Section]>>] = [
+            Recorded.next(0, mockData),
+            Recorded.completed(0)
+        ]
+        XCTAssertEqual(expected, result.events)
+        
+        
+        deleteScheduler.scheduleAt(200) {
+            for task in mockData[0].items {
+                self.databaseService.deleteTask(task, for: testUuid)
+                    .subscribe(onNext: { (result) in
+                        if result {
+                            deletePromise.fulfill()
+                            print("---- DELETE ---- \(Date().timeIntervalSinceReferenceDate)")
+                        }
+                    }).disposed(by: self.disposeBag)
+            }
+        }
+        
+        deleteScheduler.start()
+        wait(for: [deletePromise], timeout: 5)
+        deleteScheduler.stop()
+        
+        let resultAfterDelete = testScheduler.createObserver([Section].self)
+        getAfterDeleteScheduler.scheduleAt(300) {
+            self.databaseService.tasks(for: testUuid).take(1).do(onNext: { (sections) in
+                print("---- TASKS DELETE ---- \(Date().timeIntervalSinceReferenceDate)")
+                print(sections)
+                taskAfterDeletePromise.fulfill()
+            }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
+        }
+        
+        getAfterDeleteScheduler.start()
+        wait(for: [taskAfterDeletePromise], timeout: 5)
+        getAfterDeleteScheduler.stop()
+        
+        
+        
+        let expectedAfterDelete: [Recorded<Event<[Section]>>] = [
+            Recorded.next(0, emptyData),
+            Recorded.completed(0)
+        ]
+        XCTAssertEqual(expectedAfterDelete, resultAfterDelete.events)
+        
     }
     
 //    func test_tasks() {
@@ -253,85 +369,41 @@ class DatabaseServiceTest: XCTestCase {
     }
     
     func test_getSync() {
-        var userUUID = ""
-        let newUuid = UUID()
+        let uuidFalse = UUID().uuidString
+        let uuidTrue = UUID().uuidString
         
-        let syncPromise1 = expectation(description: "sync")
-        let syncPromise = expectation(description: "sync")
-        let promise = expectation(description: "tasks")
-        var sync:Bool?
+        var firstSync: Bool!
+        var secondSync: Bool!
         
-        let syncScheduler = TestScheduler(initialClock: 0)
-        syncScheduler.scheduleAt(0) {
-            self.databaseService.getSync(for: newUuid.uuidString).subscribe(onNext: { (isSync) in
-                sync = isSync
-                syncPromise1.fulfill()
+        let getFalsePromise = expectation(description: "get false")
+        let getTruePromise = expectation(description: "get true")
+        
+        let scheduler = TestScheduler(initialClock: 0)
+        
+        scheduler.scheduleAt(0) {
+            
+            self.databaseService.mainRef.child("users").child(uuidFalse).child("sync").setValue(false)
+            self.databaseService.mainRef.child("users").child(uuidTrue).child("sync").setValue(true)
+            
+            self.databaseService.getSync(for: uuidFalse).subscribe(onNext: { (sync) in
+                firstSync = sync
+                getFalsePromise.fulfill()
             }).disposed(by: self.disposeBag)
-        }
-        
-        syncScheduler.start()
-        wait(for: [syncPromise1], timeout: 5)
-        syncScheduler.stop()
-        
-        guard sync != nil else {
-            XCTFail()
-            return
-        }
-        
-        XCTAssert(!sync!)
-        sync = nil
-        
-        let uuidScheduler = TestScheduler(initialClock: 0)
-        uuidScheduler.scheduleAt(0) {
-            self.databaseService.syncUserID(newUserID: "TEST_USER", newType: .google, with: newUuid.uuidString).subscribe(onNext: { (result) in
-                if result {
-                    promise.fulfill()
-                } else {
-                    XCTFail()
-                }
-                
+            
+            self.databaseService.getSync(for: uuidTrue).subscribe(onNext: { (sync) in
+                secondSync = sync
+                getTruePromise.fulfill()
             }).disposed(by: self.disposeBag)
+            
         }
         
-        uuidScheduler.start()
-        wait(for: [promise], timeout: 5)
-        uuidScheduler.stop()
-        let getPromise = expectation(description: "tasks")
+        scheduler.start()
+        wait(for: [getFalsePromise, getTruePromise], timeout: 5)
+        scheduler.stop()
         
+        XCTAssert(!firstSync)
+        XCTAssert(secondSync)
         
-        let getUuidScheduler = TestScheduler(initialClock: 0)
-        getUuidScheduler.scheduleAt(0) {
-            self.databaseService.getUserUUID(userID: "TEST_USER", type: .google).subscribe(onNext: { (uuid) in
-                userUUID = uuid
-                getPromise.fulfill()
-            }).disposed(by: self.disposeBag)
-        }
-        
-        getUuidScheduler.start()
-        wait(for: [getPromise], timeout: 5)
-        getUuidScheduler.stop()
-        
-        XCTAssert(userUUID == newUuid.uuidString)
-        
-        
-        let syncScheduler2 = TestScheduler(initialClock: 0)
-        syncScheduler2.scheduleAt(0) {
-            self.databaseService.getSync(for: newUuid.uuidString).subscribe(onNext: { (isSync) in
-                sync = isSync
-                syncPromise.fulfill()
-            }).disposed(by: self.disposeBag)
-        }
-        
-        syncScheduler2.start()
-        wait(for: [syncPromise], timeout: 5)
-        syncScheduler2.stop()
-        
-        guard sync != nil else {
-            XCTFail()
-            return
-        }
-        
-        XCTAssert(sync!)
     }
     
     
