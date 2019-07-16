@@ -32,23 +32,22 @@ class TasksServiceTest: XCTestCase {
     }
     
     func test_add_check_delete() {
-        let promise = expectation(description: "add")
-        let deletePromise = expectation(description: "delete")
-        let taskPromise = expectation(description: "tasks")
-        let taskAfterDeletePromise = expectation(description: "tasks")
-        let testUuid = "TASK_TEST_ADD_DELETE_USER"
+        let promise = expectation(description: "addTask")
+        let deletePromise = expectation(description: "deleteTask")
+        let taskPromise = expectation(description: "tasks affter add")
+        let taskAfterDeletePromise = expectation(description: "tasks after delete")
+        let testUuid = "TEST_ADD_DELETE_USER"
+        databaseService.mainRef.child("users").child(testUuid).removeValue()
         let n = 5
-        var section: [Section]?
         
         promise.expectedFulfillmentCount = n
         deletePromise.expectedFulfillmentCount = n
         
-        var tasksGet = false
-        var count = 0
         let emptyData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
         var mockData = [Section(title: "Uncompleted", items: []), Section(title: "Completed", items: [])]
         
-        databaseService.mainRef.child("users").child(testUuid).removeValue()
+        //database.reference().child("users").child(testUuid).removeValue()
+        
         
         for i in 1...n {
             let mockTask = TaskModel(
@@ -61,91 +60,81 @@ class TasksServiceTest: XCTestCase {
             mockData[0].items.append(mockTask)
         }
         
-        let addTaskScheduler = TestScheduler(initialClock: 0)
-        let deleteTaskScheduler = TestScheduler(initialClock: 0)
+        let scheduler = TestScheduler(initialClock: 0)
         
-        addTaskScheduler.scheduleAt(0) {
+        scheduler.scheduleAt(0) {
             for task in mockData[0].items {
                 self.tasksService.addTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
                             promise.fulfill()
+                            print("---- ADD ---- \(Date().timeIntervalSinceReferenceDate)")
                         }
                     }).disposed(by: self.disposeBag)
             }
         }
-        addTaskScheduler.start()
+        
+        scheduler.start()
         wait(for: [promise], timeout: 5)
-        addTaskScheduler.stop()
+        scheduler.stop()
         
-        let result = testScheduler.createObserver([Section].self)
+        let result = scheduler.createObserver([Section].self)
         
-        let taskScheduler = TestScheduler(initialClock: 0)
-        taskScheduler.scheduleAt(5) {
-            self.tasksService.tasks(for: testUuid).do(onNext: { (sections) in
-                if !tasksGet {
-                    count = sections[0].items.count
-                    section = sections
-                    taskPromise.fulfill()
-                    tasksGet = true
-                }
+        scheduler.scheduleAt(100) {
+            self.tasksService.tasks(for: testUuid).take(1).do(onNext: { (tasks) in
+                taskPromise.fulfill()
+                print("---- TASKS ADD ---- \(Date().timeIntervalSinceReferenceDate)")
+                print(tasks)
+                
             }).subscribe(result).disposed(by: self.disposeBag)
         }
         
-        taskScheduler.start()
+        scheduler.start()
         wait(for: [taskPromise], timeout: 5)
-        taskScheduler.stop()
-        print("count after add: \(count)")
-        XCTAssert(count == n)
-        guard section != nil else {
-            XCTFail()
-            return
-        }
-        XCTAssert(section! == mockData)
-        //XCTAssert(section![1].items == mockData[1].items)
-        section = nil
+        scheduler.stop()
         
-        deleteTaskScheduler.scheduleAt(10) {
+        scheduler.scheduleAt(200) {
             for task in mockData[0].items {
                 self.tasksService.deleteTask(task, for: testUuid)
                     .subscribe(onNext: { (result) in
                         if result {
                             deletePromise.fulfill()
+                            print("---- DELETE ---- \(Date().timeIntervalSinceReferenceDate)")
                         }
                     }).disposed(by: self.disposeBag)
             }
         }
-        deleteTaskScheduler.start()
-        wait(for: [deletePromise], timeout: 5)
-        deleteTaskScheduler.stop()
         
-        let resultAfterDelete = testScheduler.createObserver([Section].self)
-        var taskAfterDeleteGet = false
-        let taskAfterDeleteScheduler = TestScheduler(initialClock: 0)
-        taskAfterDeleteScheduler.scheduleAt(15) {
-            self.tasksService.tasks(for: testUuid).do(onNext: { (sections) in
-                if !taskAfterDeleteGet {
-                    count = sections[0].items.count
-                    section = sections
-                    taskAfterDeletePromise.fulfill()
-                    taskAfterDeleteGet = true
-                }
-                
+        scheduler.start()
+        wait(for: [deletePromise], timeout: 5)
+        scheduler.stop()
+        
+        let resultAfterDelete = scheduler.createObserver([Section].self)
+        scheduler.scheduleAt(300) {
+            self.tasksService.tasks(for: testUuid).take(1).do(onNext: { (sections) in
+                print("---- TASKS DELETE ---- \(Date().timeIntervalSinceReferenceDate)")
+                print(sections)
+                taskAfterDeletePromise.fulfill()
             }).subscribe(resultAfterDelete).disposed(by: self.disposeBag)
         }
         
-        taskAfterDeleteScheduler.start()
+        scheduler.start()
         wait(for: [taskAfterDeletePromise], timeout: 5)
-        taskAfterDeleteScheduler.stop()
-        print("count after delete: \(count)")
-        XCTAssert(count == 0)
+        scheduler.stop()
         
-        guard section != nil else {
-            XCTFail()
-            return
-        }
         
-        XCTAssert(section! == emptyData)
+        let expected: [Recorded<Event<[Section]>>] = [
+            Recorded.next(100, mockData),
+            Recorded.completed(100)
+        ]
+        
+        let expectedAfterDelete: [Recorded<Event<[Section]>>] = [
+            Recorded.next(300, emptyData),
+            Recorded.completed(300)
+        ]
+        
+        XCTAssertEqual(expected, result.events)
+        XCTAssertEqual(expectedAfterDelete, resultAfterDelete.events)
     }
     
 //    func test_tasks() {
